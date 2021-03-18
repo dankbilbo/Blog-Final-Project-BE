@@ -4,11 +4,12 @@ import com.codegym.blog.demo.Keywords.ErrorCodeMessage;
 import com.codegym.blog.demo.Keywords.StringResponse;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.EntityIn.UserSignUp;
+import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.model.Response;
 import com.codegym.blog.demo.model.SystemResponse;
 import com.codegym.blog.demo.security.PasswordEncoder;
-import com.codegym.blog.demo.service.Interface.ActionService;
+import com.codegym.blog.demo.service.ActionService.ActionService;
 import com.codegym.blog.demo.service.Interface.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,10 @@ public class ActionServiceImpl implements ActionService {
         return Response.ok(ErrorCodeMessage.SUCCESS
                 ,StringResponse.REGISTERED
                 ,new UserOut(userSignUp.getUsername(),userSignUp.getPassword(),userSignUp.getEmail()));
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<BlogOut>> getALlPublicBlogs() {
+        List<User>
     }
 }
