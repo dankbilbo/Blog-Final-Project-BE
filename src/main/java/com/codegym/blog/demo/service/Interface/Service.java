@@ -1,4 +1,4 @@
-package com.codegym.blog.demo.service;
+package com.codegym.blog.demo.service.Interface;
 
 import java.util.List;
 import java.util.Optional;

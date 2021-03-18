@@ -1,6 +1,5 @@
-package com.codegym.blog.demo.model;
+package com.codegym.blog.demo.model.Entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,19 +7,19 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 
 @Entity
-@Data
-public class User extends BaseEntity{
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
 
     private String firstname;
-
 
     private String lastName;
 
@@ -33,6 +32,8 @@ public class User extends BaseEntity{
 
     private String avatarURL;
 
+    private LocalDateTime createdAt;
+
     @Enumerated
     private UserRole userRole;
 
@@ -41,6 +42,27 @@ public class User extends BaseEntity{
 
     private boolean locked = false;
     private boolean expired = false;
+
+    public User(String firstname, String lastName, String username, String password, String email, String avatarURL, LocalDateTime createdAt, UserRole userRole, boolean enabled, boolean locked, boolean expired) {
+        this.firstname = firstname;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.avatarURL = avatarURL;
+        this.createdAt = createdAt;
+        this.userRole = userRole;
+        this.enabled = enabled;
+        this.locked = locked;
+        this.expired = expired;
+    }
+
+    public User(String username, String password, String email, LocalDateTime createdAt) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.createdAt = createdAt;
+    }
 
     // security
 

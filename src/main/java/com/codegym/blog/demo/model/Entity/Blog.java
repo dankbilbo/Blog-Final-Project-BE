@@ -1,4 +1,4 @@
-package com.codegym.blog.demo.model;
+package com.codegym.blog.demo.model.Entity;
 
 import lombok.*;
 
@@ -7,15 +7,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
-public class Blog extends BaseEntity {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     private String title;
     private String content;
     private String shortDescription;
     private String previewImageURL;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private Category category;
@@ -37,4 +41,16 @@ public class Blog extends BaseEntity {
 
     private boolean status = false;
 
+    public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, List<Tag> tags, Long views, boolean status) {
+        this.title = title;
+        this.content = content;
+        this.shortDescription = shortDescription;
+        this.previewImageURL = previewImageURL;
+        this.createdAt = createdAt;
+        this.category = category;
+        this.user = user;
+        this.tags = tags;
+        this.views = views;
+        this.status = status;
+    }
 }
