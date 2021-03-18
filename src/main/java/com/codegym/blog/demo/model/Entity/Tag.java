@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tag")
 public class Tag{
 
     @Id
