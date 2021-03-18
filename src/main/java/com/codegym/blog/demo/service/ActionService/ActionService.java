@@ -8,6 +8,4 @@ import org.springframework.http.ResponseEntity;
 
 public interface ActionService {
     ResponseEntity<SystemResponse<UserOut>> signUp(UserSignUp userSignUp);
-
-    ResponseEntity<SystemResponse<BlogOut>> getALlPublicBlogs();
 }

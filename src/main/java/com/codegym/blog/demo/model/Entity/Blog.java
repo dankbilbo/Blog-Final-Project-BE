@@ -40,7 +40,7 @@ public class Blog {
     // TODO : logic verify ?
 //    private boolean verified;
 
-    private boolean status = false;
+    private boolean status = true;
 
     public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, List<Tag> tags, Long views, boolean status) {
         this.title = title;

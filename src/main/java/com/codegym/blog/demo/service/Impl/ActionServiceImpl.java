@@ -46,13 +46,8 @@ public class ActionServiceImpl implements ActionService {
                         ,userSignUp.getEmail()
                         , LocalDateTime.now()
                         ));
-        return Response.ok(ErrorCodeMessage.SUCCESS
+        return Response.ok(ErrorCodeMessage.CREATED
                 ,StringResponse.REGISTERED
                 ,new UserOut(userSignUp.getUsername(),userSignUp.getPassword(),userSignUp.getEmail()));
-    }
-
-    @Override
-    public ResponseEntity<SystemResponse<BlogOut>> getALlPublicBlogs() {
-        List<User>
     }
 }

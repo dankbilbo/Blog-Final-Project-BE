@@ -17,10 +17,16 @@ public class Response{
                 .body(new SystemResponse<>(errorCodeResponse,messageResponse,t));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> bad_request( String message){
+    public static <T> ResponseEntity<SystemResponse<T>> bad_request(String message){
         return ResponseEntity
                 .status(400)
                 .body(new SystemResponse<>(400,message));
+    }
+
+    public static <T> ResponseEntity<SystemResponse<T>> not_found(String message){
+        return ResponseEntity
+                .status(404)
+                .body(new SystemResponse<>(404,message));
     }
 //    public static  <T> ResponseEntity<SystemResponse<T>> httpError(HttpErro){
 //

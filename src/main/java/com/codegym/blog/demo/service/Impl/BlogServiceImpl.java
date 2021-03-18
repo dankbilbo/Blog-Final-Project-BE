@@ -36,4 +36,10 @@ public class BlogServiceImpl implements BlogService {
     public void deleteById(Long id) {
         blogRepository.deleteById(id);
     }
+
+
+    @Override
+    public List<Blog> findALlPublicBlogs() {
+        return blogRepository.findAllByStatusIsTrue();
+    }
 }
