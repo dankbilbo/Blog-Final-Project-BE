@@ -76,7 +76,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
     public ResponseEntity<SystemResponse<BlogOut>> getBlogById(Long id) {
         Optional<Blog> blog = blogService.findById(id);
 
-        if (blog.isPresent()) {
+        if (!blog.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
         }
 
