@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class BlogOut extends BaseEntityOut{
+    private Long id;
     private String title;
     private String content;
     private String shortDescription;

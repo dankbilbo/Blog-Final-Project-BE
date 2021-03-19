@@ -6,7 +6,7 @@ import com.codegym.blog.demo.model.Response;
 
 import java.util.Optional;
 
-public interface UserService extends Service<User> {
+public interface UserService extends Service<User>{
     Optional<User> findByEmail(String email);
     Optional<User> findByName(String name);
 }

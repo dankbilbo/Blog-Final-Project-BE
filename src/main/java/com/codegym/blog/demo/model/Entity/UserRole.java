@@ -1,6 +1,10 @@
 package com.codegym.blog.demo.model.Entity;
 
-public enum UserRole {
-    ADMIN,
-    MEMBER
+import javax.persistence.Enumerated;
+
+public class UserRole {
+    private Long id;
+
+    @Enumerated
+    private RoleName roleName;
 }

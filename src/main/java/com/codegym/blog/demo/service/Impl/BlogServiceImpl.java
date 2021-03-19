@@ -1,7 +1,7 @@
 package com.codegym.blog.demo.service.Impl;
 
 import com.codegym.blog.demo.model.Entity.Blog;
-import com.codegym.blog.demo.reopository.BlogRepository;
+import com.codegym.blog.demo.repository.BlogRepository;
 import com.codegym.blog.demo.service.Interface.BlogService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

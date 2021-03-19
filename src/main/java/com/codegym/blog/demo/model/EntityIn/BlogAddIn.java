@@ -10,4 +10,5 @@ public class BlogAddIn {
     private String shortDescription;
     private String previewImageURL;
     private Long idCategory;
+    private String tags;
 }
