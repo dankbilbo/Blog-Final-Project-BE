@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,8 +52,8 @@ public class ActionServiceImpl implements ActionService {
                 ,new UserOut(userSignUp.getUsername(),userSignUp.getPassword(),userSignUp.getEmail()));
     }
 
-    @Override
-    public ResponseEntity<SystemResponse<BlogOut>> getALlPublicBlogs() {
-        List<User>
-    }
+//    @Override
+//    public ResponseEntity<SystemResponse<BlogOut>> getALlPublicBlogs() {
+//        List<User>
+//    }
 }

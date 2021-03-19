@@ -18,7 +18,7 @@ public class BlogController {
     @Autowired
     private final ActionService actionService;
 
-    public ResponseEntity<SystemResponse<BlogOut>> getAllPublicBlogs(){
-        return actionService.getALlPublicBlogs();
-    }
+//    public ResponseEntity<SystemResponse<BlogOut>> getAllPublicBlogs(){
+//        return actionService.getALlPublicBlogs();
+//    }
 }
