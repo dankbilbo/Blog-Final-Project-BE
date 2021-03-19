@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
 
@@ -49,9 +49,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return  userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + "not found"));
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return  userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException(username + "not found"));
+//    }
 }

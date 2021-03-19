@@ -8,21 +8,27 @@ import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.repository.TagRepository;
+import com.codegym.blog.demo.service.Interface.TagService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
+@AllArgsConstructor
 public class MapEntityAndOut {
-    @Autowired
-    private static TagRepository tagRepository;
 
-    public static List<UserOut> mapListUserEntityAndOut(List<User> users, List<UserOut> userOuts) {
+    @Autowired
+    private final TagService tagService;
+
+    public List<UserOut> mapListUserEntityAndOut(List<User> users, List<UserOut> userOuts) {
         return userOuts;
     }
 
-    public static List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs, ArrayList<BlogOut> blogOuts) {
+    public List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs, ArrayList<BlogOut> blogOuts) {
         for (Blog blog : blogs) {
             BlogOut blogOut = new BlogOut();
             blogOut.setId(blog.getId());
@@ -37,7 +43,8 @@ public class MapEntityAndOut {
         return blogOuts;
     }
 
-    public static BlogOut mapBlogEntityAndOut(Blog blog, BlogOut blogOut) {
+    public BlogOut mapBlogEntityAndOut(Blog blog) {
+        BlogOut blogOut = new BlogOut();
         blogOut.setId(blog.getId());
         blogOut.setTitle(blog.getTitle());
         blogOut.setContent(blog.getContent());
@@ -49,7 +56,8 @@ public class MapEntityAndOut {
         return blogOut;
     }
 
-    public static Blog mapBlogInAndEntity(BlogAddIn blogAddIn, Blog blog, User user, Category category) {
+    public Blog mapBlogInAndEntity(BlogAddIn blogAddIn, User user, Category category) {
+        Blog blog = new Blog();
         blog.setTitle(blogAddIn.getTitle());
         blog.setContent(blogAddIn.getContent());
         blog.setShortDescription(blogAddIn.getShortDescription());
@@ -61,20 +69,20 @@ public class MapEntityAndOut {
         return blog;
     }
 
-    static Set<Tag> getTagBlog(String tags) {
+    Set<Tag> getTagBlog(String tags) {
         Set<String> tagsSplit = new HashSet<>(Arrays.asList(tags.split(",")));
         Set<Tag> blogTags = new HashSet<>();
         for (String tag : tagsSplit) {
-            boolean tagExistedInDB = tagRepository.findByName(tag).isPresent();
+            boolean tagExistedInDB = tagService.findByName(tag).isPresent();
             if (!tagExistedInDB) {
-                tagRepository.save(new Tag(tag, LocalDateTime.now()));
+                tagService.save(new Tag(tag, LocalDateTime.now()));
             }
-            blogTags.add(tagRepository.findByName(tag).get());
+            blogTags.add(tagService.findByName(tag).get());
         }
         return blogTags;
     }
 
-    static String setTagsToString(Set<Tag> tags) {
+    String setTagsToString(Set<Tag> tags) {
         ArrayList<String> tagNameCollect = new ArrayList<>();
         for (Tag tag : tags) {
             tagNameCollect.add(tag.getName());

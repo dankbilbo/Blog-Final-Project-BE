@@ -34,6 +34,11 @@ public class BlogController {
         return blogService.addBlog(blogAddIn);
     }
 
+    @PatchMapping
+    public ResponseEntity<SystemResponse<BlogOut>> updateBlog(@PathVariable Long id,@RequestBody BlogAddIn blogAddIn){
+        return blogService.updateBlog(blogAddIn, id);
+    }
+
 
 
 }

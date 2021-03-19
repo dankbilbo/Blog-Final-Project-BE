@@ -2,6 +2,7 @@ package com.codegym.blog.demo.model.Entity;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class User  {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,11 +42,12 @@ public class User  {
 
     private LocalDateTime createdAt;
 
-    @ManyToMany
-    @JoinTable(name = "user_roles"
-            ,joinColumns = @JoinColumn(name="user_id")
-            ,inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set role = new HashSet();
+    @Enumerated
+//    @ManyToMany
+//    @JoinTable(name = "user_roles"
+//            ,joinColumns = @JoinColumn(name="user_id")
+//            ,inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private RoleName role;
 
 
     public User(String username, String password, String email, LocalDateTime createdAt) {
@@ -53,6 +56,5 @@ public class User  {
         this.email = email;
         this.createdAt = createdAt;
     }
-
 
 }

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface BlogActionService {
-    ResponseEntity<SystemResponse<BlogOut>> updateBlog();
+    ResponseEntity<SystemResponse<BlogOut>> updateBlog(BlogAddIn blogAddIn, Long id);
     ResponseEntity<SystemResponse<List<BlogOut>>> getALlPublicBlogs();
     ResponseEntity<SystemResponse<List<BlogOut>>> getAllPrivateBlog();
     ResponseEntity<SystemResponse<BlogOut>> getBlogById(Long id);

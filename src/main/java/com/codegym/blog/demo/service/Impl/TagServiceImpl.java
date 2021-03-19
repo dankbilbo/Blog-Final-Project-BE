@@ -36,7 +36,12 @@ public class TagServiceImpl implements TagService {
         tagRepository.deleteById(id);
     }
 
-    public void findByName(String name){
-        tagRepository.findByName(name);
+    @Override
+    public Optional<Tag> findByName(String name){
+        return tagRepository.findByName(name);
+    }
+
+    public TagRepository getTagRepository() {
+        return tagRepository;
     }
 }

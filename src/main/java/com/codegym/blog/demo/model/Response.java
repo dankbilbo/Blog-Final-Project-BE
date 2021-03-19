@@ -28,6 +28,12 @@ public class Response{
                 .status(404)
                 .body(new SystemResponse<>(404,message));
     }
+
+    public static <T> ResponseEntity<SystemResponse<T>> unauthorized(String message){
+        return ResponseEntity
+                .status(403)
+                .body(new SystemResponse<>(403,message));
+    }
 //    public static  <T> ResponseEntity<SystemResponse<T>> httpError(HttpErro){
 //
 //    }
