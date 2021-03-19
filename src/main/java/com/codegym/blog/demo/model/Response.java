@@ -29,12 +29,21 @@ public class Response{
                 .body(new SystemResponse<>(404,message));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> unauthorized(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> not_authorized(String message){
         return ResponseEntity
                 .status(403)
                 .body(new SystemResponse<>(403,message));
     }
-//    public static  <T> ResponseEntity<SystemResponse<T>> httpError(HttpErro){
-//
-//    }
+
+    public static <T> ResponseEntity<SystemResponse<T>> created(String message){
+        return ResponseEntity
+                .status(201)
+                .body(new SystemResponse<>(201,message));
+    }
+
+    public static ResponseEntity<SystemResponse<String>> no_content(String message) {
+        return ResponseEntity
+                .status(204)
+                .body(new SystemResponse<>(204,message));
+    }
 }

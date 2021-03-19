@@ -34,11 +34,15 @@ public class BlogController {
         return blogService.addBlog(blogAddIn);
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<SystemResponse<BlogOut>> updateBlog(@PathVariable Long id,@RequestBody BlogAddIn blogAddIn){
         return blogService.updateBlog(blogAddIn, id);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SystemResponse<String>> deleteBlog(@PathVariable Long id){
+        return blogService.deleteBlog(id);
+    }
 
 
 }

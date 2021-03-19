@@ -13,4 +13,5 @@ public interface BlogActionService {
     ResponseEntity<SystemResponse<List<BlogOut>>> getAllPrivateBlog();
     ResponseEntity<SystemResponse<BlogOut>> getBlogById(Long id);
     ResponseEntity<SystemResponse<BlogOut>> addBlog(BlogAddIn blogAddIn);
+    ResponseEntity<SystemResponse<String>> deleteBlog(Long id);
 }
