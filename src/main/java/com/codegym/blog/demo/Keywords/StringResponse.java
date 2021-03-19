@@ -6,4 +6,5 @@ public class StringResponse {
     public static String EMAIL_EXISTED = "email existed";
     public static String REGISTERED = "user signed up";
     public static String BLOG_NOT_FOUND = "blogs not found";
+    public static String NOT_AUTHORIZED = "u are not allowed to view this resources";
 }
