@@ -13,4 +13,5 @@ public class BlogOut extends BaseEntityOut{
     private String previewImageURl;
     private Long userId;
     private LocalDateTime createdAt;
+    private String tags;
 }

@@ -24,4 +24,9 @@ public class Tag{
 
     @ManyToMany
     private Set<Blog> blogs;
+
+    public Tag(String name, LocalDateTime createdAt) {
+        this.name = name;
+        this.createdAt = createdAt;
+    }
 }

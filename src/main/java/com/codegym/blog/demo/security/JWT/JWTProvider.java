@@ -24,10 +24,10 @@ public class JWTProvider {
                 .compact();
     }
 
-    public boolean validateJWTToken(String authencicationToken){
-        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJwt(authencicationToken);
-        return
-    }
+//    public boolean validateJWTToken(String authencicationToken){
+//        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJwt(authencicationToken);
+//        return
+//    }
 
     public String getUserNameFromJwtToken(String token){
         return Jwts.parser()

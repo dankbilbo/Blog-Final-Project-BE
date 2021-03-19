@@ -11,7 +11,8 @@ public class UserPrincipal implements UserDetails {
     private String lastName;
     private String password;
     private String email;
-    private String
+    private String a;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
