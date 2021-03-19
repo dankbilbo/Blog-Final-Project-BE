@@ -7,4 +7,5 @@ public class StringResponse {
     public static String REGISTERED = "user signed up";
     public static String BLOG_NOT_FOUND = "blogs not found";
     public static String NOT_AUTHORIZED = "u are not allowed to view this resources";
+    public static String NOT_FOUND = "not found";
 }
