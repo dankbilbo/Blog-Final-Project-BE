@@ -26,5 +26,4 @@ public class BlogController {
         return blogService.getALlPublicBlogs();
     }
 
-
 }
