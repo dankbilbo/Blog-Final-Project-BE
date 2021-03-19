@@ -53,6 +53,8 @@ public class MapEntityAndOut {
         blogOut.setUserId(blog.getUser().getId());
         blogOut.setCreatedAt(blog.getCreatedAt());
         blogOut.setTags(setTagsToString(blog.getTags()));
+        blogOut.setViews(blog.getViews());
+        blogOut.setPrivacy(blog.isPrivacy());
         return blogOut;
     }
 
@@ -63,6 +65,7 @@ public class MapEntityAndOut {
         blog.setShortDescription(blogAddIn.getShortDescription());
         blog.setPreviewImageURL(blogAddIn.getPreviewImageURL());
         blog.setCategory(category);
+        blog.setPrivacy(blogAddIn.isPrivacy());
         blog.setCreatedAt(LocalDateTime.now());
         blog.setTags(getTagBlog(blogAddIn.getTags()));
         blog.setUser(user);

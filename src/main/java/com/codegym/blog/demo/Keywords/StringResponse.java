@@ -10,4 +10,7 @@ public class StringResponse {
     public static String BLOG_ADDED = "blog added";
     public static String BLOD_UPDATED = "blog updated";
     public static String BLOG_DELETED = "blog deleted";
+    public static String NOT_FOUND = "not found";
+
+    public static String CATEGORY_EXISTED = "category existed";
 }

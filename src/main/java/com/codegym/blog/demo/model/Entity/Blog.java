@@ -40,9 +40,9 @@ public class Blog {
     // TODO : logic verify ?
 //    private boolean verified;
 
-    private boolean status = true;
+    private boolean privacy = true;
 
-    public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, Set<Tag> tags, Long views, boolean status) {
+    public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, Set<Tag> tags, Long views, boolean privacy) {
         this.title = title;
         this.content = content;
         this.shortDescription = shortDescription;
@@ -52,6 +52,6 @@ public class Blog {
         this.user = user;
         this.tags = tags;
         this.views = views;
-        this.status = status;
+        this.privacy = privacy;
     }
 }

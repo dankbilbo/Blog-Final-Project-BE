@@ -73,9 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().ignoringAntMatchers("/**");
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
         http.authorizeRequests()
-                .antMatchers("/", "/login").permitAll()
+                .antMatchers("/", "/login","/register").permitAll()
                 .antMatchers("/blogs").hasAnyAuthority("MEMBER", "ADMIN")
-                .antMatchers("/register").hasAnyAuthority("MEMBER")
                 .anyRequest()
                 .authenticated()
                 .and().csrf().disable();

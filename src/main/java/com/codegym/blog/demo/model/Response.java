@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 
 @Data
 public class Response{
-    public static <T> ResponseEntity<SystemResponse<T>> internalServerError(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> internalServerError(int errorCodeResponse,String message){
         return ResponseEntity
-                .status(500)
-                .body(new SystemResponse<>(500,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
     }
 
     public static <T> ResponseEntity<SystemResponse<T>> ok(int errorCodeResponse, String messageResponse, T t){
@@ -17,33 +17,33 @@ public class Response{
                 .body(new SystemResponse<>(errorCodeResponse,messageResponse,t));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> bad_request(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> bad_request(int errorCodeResponse,String message){
         return ResponseEntity
-                .status(400)
-                .body(new SystemResponse<>(400,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> not_found(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> not_found(int errorCodeResponse,String message){
         return ResponseEntity
-                .status(404)
-                .body(new SystemResponse<>(404,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> not_authorized(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> not_authorized(int errorCodeResponse,String message){
         return ResponseEntity
-                .status(403)
-                .body(new SystemResponse<>(403,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
     }
 
-    public static <T> ResponseEntity<SystemResponse<T>> created(String message){
+    public static <T> ResponseEntity<SystemResponse<T>> created(int errorCodeResponse,String message,T t){
         return ResponseEntity
-                .status(201)
-                .body(new SystemResponse<>(201,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message,t));
     }
 
-    public static ResponseEntity<SystemResponse<String>> no_content(String message) {
+    public static ResponseEntity<SystemResponse<String>> no_content(int errorCodeResponse,String message) {
         return ResponseEntity
-                .status(204)
-                .body(new SystemResponse<>(204,message));
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
     }
 }

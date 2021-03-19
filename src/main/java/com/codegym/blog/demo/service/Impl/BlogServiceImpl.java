@@ -40,6 +40,6 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Blog> findALlPublicBlogs() {
-        return blogRepository.findAllByStatusIsTrue();
+        return blogRepository.findAllByPrivacyIsTrue();
     }
 }

@@ -38,18 +38,24 @@ public class UserActionServiceImpl implements ActionService {
     public ResponseEntity<SystemResponse<UserOut>> signUp(UserSignUp userSignUp) {
         Optional<User> userFindByUsername = userService.findByUsername(userSignUp.getUsername());
         if (userFindByUsername.isPresent()){
-            return Response.bad_request(StringResponse.USERNAME_EXISTED);
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.USERNAME_EXISTED);
         }
 
         Optional<User> userFindByEmail = userService.findByEmail(userSignUp.getEmail());
         if (userFindByEmail.isPresent()){
-            return Response.bad_request(StringResponse.EMAIL_EXISTED);
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.EMAIL_EXISTED);
         }
         String userPassword = passwordEncoder.encoder().encode(userSignUp.getPassword());
 
+
+        Optional<UserRole> roleMember = roleRepository.findByRoleName("MEMBER");
+        if (!roleMember.isPresent()){
+            roleRepository.save(new UserRole("MEMBER"));
+        }
+
         Set<UserRole> roles = new HashSet<>();
         roles.add(roleRepository.findByRoleName("MEMBER").get());
-        userService.save(
+        User user = userService.save(
                 new User(userSignUp.getUsername()
                         ,userPassword
                         ,userSignUp.getEmail()
@@ -58,6 +64,10 @@ public class UserActionServiceImpl implements ActionService {
                         ));
         return Response.ok(ErrorCodeMessage.CREATED
                 ,StringResponse.REGISTERED
-                ,new UserOut(userSignUp.getUsername(),userSignUp.getPassword(),userSignUp.getEmail()));
+                ,new UserOut(user.getId()
+                        ,user.getUsername()
+                        ,user.getEmail()
+                        ,user.getRole()
+                        ,user.getCreatedAt()));
     }
 }

@@ -11,4 +11,5 @@ public class BlogAddIn {
     private String previewImageURL;
     private Long idCategory;
     private String tags;
+    private boolean privacy;
 }

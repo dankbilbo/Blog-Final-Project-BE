@@ -22,4 +22,8 @@ public class Category{
 
     private LocalDateTime createdAt;
 
+    public Category(@NotBlank(message = "Please enter name") String name, LocalDateTime createdAt) {
+        this.name = name;
+        this.createdAt = createdAt;
+    }
 }
