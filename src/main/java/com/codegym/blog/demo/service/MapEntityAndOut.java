@@ -38,6 +38,9 @@ public class MapEntityAndOut {
             blogOut.setPreviewImageURl(blog.getPreviewImageURL());
             blogOut.setCreatedAt(blog.getCreatedAt());
             blogOut.setUserId(blog.getUser().getId());
+            blogOut.setPrivacy(blog.isPrivacy());
+            blogOut.setTags(setTagsToString(blog.getTags()));
+            blogOut.setViews(blog.getViews());
             blogOuts.add(blogOut);
         }
         return blogOuts;
