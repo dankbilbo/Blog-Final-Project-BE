@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -33,7 +33,7 @@ public class Blog {
             joinColumns = @JoinColumn(name = "blogId"),
             inverseJoinColumns = @JoinColumn(name = "tagId")
     )
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
     private Long views = 0l;
 
@@ -42,7 +42,7 @@ public class Blog {
 
     private boolean status = true;
 
-    public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, List<Tag> tags, Long views, boolean status) {
+    public Blog(String title, String content, String shortDescription, String previewImageURL, LocalDateTime createdAt, Category category, User user, Set<Tag> tags, Long views, boolean status) {
         this.title = title;
         this.content = content;
         this.shortDescription = shortDescription;

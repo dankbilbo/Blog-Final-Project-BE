@@ -1,6 +1,21 @@
 package com.codegym.blog.demo.model.Entity;
 
-public enum UserRole {
-    ADMIN,
-    MEMBER
+import lombok.*;
+
+import javax.persistence.*;
+import java.nio.file.FileStore;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRole {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    private String roleName;
+
 }

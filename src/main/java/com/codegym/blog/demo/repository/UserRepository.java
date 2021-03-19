@@ -1,4 +1,4 @@
-package com.codegym.blog.demo.reopository;
+package com.codegym.blog.demo.repository;
 
 import com.codegym.blog.demo.model.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

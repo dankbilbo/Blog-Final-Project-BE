@@ -5,4 +5,5 @@ public class ErrorCodeMessage {
     public static int INTERNAL_SERVER = 500;
     public static int NOT_FOUND = 404;
     public static int CREATED = 201;
+    public static int NOT_AUTHORIZED = 403;
 }
