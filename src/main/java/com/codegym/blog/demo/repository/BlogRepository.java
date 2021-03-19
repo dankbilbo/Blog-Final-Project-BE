@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BlogRepository extends JpaRepository<Blog,Long> {
     List<Blog> findAllByPrivacyIsTrue();
+    List<Blog> findAllByUser_Username(String username);
 }

@@ -63,13 +63,22 @@ public class ActionBlogServiceImpl implements BlogActionService {
         if (blogService.findALlPublicBlogs().isEmpty()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
         }
-        List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(publicBlogs, new ArrayList<>());
+        List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(publicBlogs);
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
     }
 
     @Override
-    public ResponseEntity<SystemResponse<List<BlogOut>>> getAllPrivateBlog() {
-        return null;
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getAllPersonalBlog() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        List<Blog> blogs = blogService.findAllByUsername(username);
+        if (blogs.isEmpty()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+        }
+
+        List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(blogs);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
     }
 
     @Override

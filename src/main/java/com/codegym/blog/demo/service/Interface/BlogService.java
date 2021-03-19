@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface BlogService extends Service<Blog>{
     List<Blog> findALlPublicBlogs();
+    List<Blog> findAllByUsername(String username);
 }

@@ -28,7 +28,8 @@ public class MapEntityAndOut {
         return userOuts;
     }
 
-    public List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs, ArrayList<BlogOut> blogOuts) {
+    public List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs) {
+        List<BlogOut> blogOuts = new ArrayList<>();
         for (Blog blog : blogs) {
             BlogOut blogOut = new BlogOut();
             blogOut.setId(blog.getId());

@@ -44,5 +44,10 @@ public class BlogController {
         return blogService.deleteBlog(id);
     }
 
+    @GetMapping("/personal")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getPersonalBlogs(){
+        return blogService.getAllPersonalBlog();
+    }
+
 
 }

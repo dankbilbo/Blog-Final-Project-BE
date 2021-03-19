@@ -42,4 +42,9 @@ public class BlogServiceImpl implements BlogService {
     public List<Blog> findALlPublicBlogs() {
         return blogRepository.findAllByPrivacyIsTrue();
     }
+
+    @Override
+    public List<Blog> findAllByUsername(String username) {
+        return blogRepository.findAllByUser_Username(username);
+    }
 }
