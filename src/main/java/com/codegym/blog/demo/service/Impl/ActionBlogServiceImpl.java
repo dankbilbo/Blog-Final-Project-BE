@@ -74,7 +74,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
         List<Blog> blogs = blogService.findAllByUsername(username);
         if (blogs.isEmpty()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
         }
 
         List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(blogs);
@@ -122,8 +122,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
     @Override
     public ResponseEntity<SystemResponse<String>> deleteBlog(Long id) {
         Optional<Blog> blog = blogService.findById(id);
-
-        if (blog.isPresent()) {
+        if (!blog.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
         }
 
