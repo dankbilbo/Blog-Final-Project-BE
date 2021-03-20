@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -74,9 +75,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
         http.authorizeRequests()
                 .antMatchers("/", "/login","/register").permitAll()
-                .antMatchers("/blogs").hasAnyAuthority("MEMBER", "ADMIN")
-                .anyRequest()
-                .authenticated()
+                .antMatchers(HttpMethod.PUT,"/blogs").hasAnyAuthority("MEMBER", "ADMIN")
+                .antMatchers(HttpMethod.PATCH,"/blogs").hasAnyAuthority("MEMBER", "ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/blogs").hasAnyAuthority("MEMBER", "ADMIN")
+                .antMatchers(HttpMethod.POST,"/blogs").hasAnyAuthority("MEMBER", "ADMIN")
+                .antMatchers(HttpMethod.GET,"/blogs/personal").hasAnyAuthority("MEMBER","ADMIN")
+                .antMatchers("/admin").hasAnyAuthority("ADMIN")
                 .and().csrf().disable();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
