@@ -6,6 +6,7 @@ import com.codegym.blog.demo.model.Entity.Blog;
 import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
+import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.Response;
 import com.codegym.blog.demo.model.SystemResponse;
@@ -22,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,25 +43,33 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
 
     @Override
-    public ResponseEntity<SystemResponse<BlogOut>> updateBlog(BlogAddIn blogAddIn, Long id) {
-        boolean blogExisted = blogService.findById(id).isPresent();
-        if (!blogExisted){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
+    public ResponseEntity<SystemResponse<BlogOut>> updateBlog(BlogUpdateIn blogUpdateIn, Long id) {
+        Optional<Blog> blog = blogService.findById(id);
+        if (!blog.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
-        //TODO : check user
 
-        Optional<Category> category = categoryService.findById(blogAddIn.getIdCategory());
+        User user = blog.get().getUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-//        Blog blog = mapEntityAndOut.mapBlogInAndEntity(blogAddIn,)
-        BlogOut blogOut = new BlogOut();
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.BLOD_UPDATED,blogOut);
+        if (!username.equals(user.getUsername())
+                && !user.getRole().stream().noneMatch(userRole -> !userRole.getRoleName().equals("ADMIN"))) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+
+        Blog blogToUpdate = mapEntityAndOut.mapBlogUpdateInAndEntity(blogUpdateIn,blog.get());
+        Blog blogAfterUpdate = blogService.save(blogToUpdate);
+
+        BlogOut blogOut = mapEntityAndOut.mapBlogEntityAndOut(blogAfterUpdate);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.BLOD_UPDATED, blogOut);
     }
 
     @Override
     public ResponseEntity<SystemResponse<List<BlogOut>>> getALlPublicBlogs() {
         List<Blog> publicBlogs = blogService.findALlPublicBlogs();
         if (blogService.findALlPublicBlogs().isEmpty()) {
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(publicBlogs);
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
@@ -73,12 +81,12 @@ public class ActionBlogServiceImpl implements BlogActionService {
         String username = authentication.getName();
 
         List<Blog> blogs = blogService.findAllByUsername(username);
-        if (blogs.isEmpty()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
+        if (blogs.isEmpty()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
 
         List<BlogOut> blogOuts = mapEntityAndOut.mapListBlogEntityAndOut(blogs);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
     }
 
     @Override
@@ -86,20 +94,26 @@ public class ActionBlogServiceImpl implements BlogActionService {
         Optional<Blog> blog = blogService.findById(id);
 
         if (!blog.isPresent()) {
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
 
         User user = blog.get().getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username  = authentication.getName();
+        String username = authentication.getName();
 
         if (!username.equals(user.getUsername())
                 && blog.get().isPrivacy() == false
-                && !user.getRole().stream().noneMatch(userRole -> !userRole.getRoleName().equals("ADMIN"))){
-            return Response.not_authorized(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_AUTHORIZED);
+                && !user.getRole().stream().noneMatch(userRole -> !userRole.getRoleName().equals("ADMIN"))) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
-        BlogOut blogOut = mapEntityAndOut.mapBlogEntityAndOut(blog.get());
+        if (!username.equals(user.getUsername())){
+             blog.get().setViews(blog.get().getViews() + 1);
+
+        }
+        Blog blogAfterView = blogService.save(blog.get());
+
+        BlogOut blogOut = mapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
     }
 
@@ -112,34 +126,34 @@ public class ActionBlogServiceImpl implements BlogActionService {
         Category categoryAdded = !category.isPresent()
                 ? categoryService.save(new Category("General", LocalDateTime.now())) : category.get();
 
-        Blog blog = mapEntityAndOut.mapBlogInAndEntity(blogAddIn,user.get(),categoryAdded);
+        Blog blog = mapEntityAndOut.mapBlogAddInAndEntity(blogAddIn, user.get(), categoryAdded);
         blog = blogService.save(blog);
 
         BlogOut blogOut = mapEntityAndOut.mapBlogEntityAndOut(blog);
-        return  Response.created(ErrorCodeMessage.CREATED,StringResponse.BLOG_ADDED,blogOut);
+        return Response.created(ErrorCodeMessage.CREATED, StringResponse.BLOG_ADDED, blogOut);
     }
 
     @Override
     public ResponseEntity<SystemResponse<String>> deleteBlog(Long id) {
         Optional<Blog> blog = blogService.findById(id);
         if (!blog.isPresent()) {
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.BLOG_NOT_FOUND);
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
 
         User user = blog.get().getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username  = authentication.getName();
+        String username = authentication.getName();
         if (!username.equals(user.getUsername())
                 && blog.get().isPrivacy() == false
-                && !user.getRole().stream().noneMatch(userRole -> !userRole.getRoleName().equals("ADMIN"))){
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED,StringResponse.NOT_AUTHORIZED);
+                && !user.getRole().stream().noneMatch(userRole -> !userRole.getRoleName().equals("ADMIN"))) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
         blogService.deleteById(id);
-        return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.BLOG_DELETED);
+        return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.BLOG_DELETED);
     }
 
-//    checkUser(Optional<Blog> blogOptional){
+//    ResponseEntity<SystemResponse<BlogOut>> checkUser(Optional<Blog> blogOptional){
 //
 //    }
 

@@ -14,6 +14,7 @@ public class BlogOut extends BaseEntityOut{
     private Long userId;
     private LocalDateTime createdAt;
     private String tags;
+    private Long categoryId;
     private boolean privacy;
     private Long views;
 }

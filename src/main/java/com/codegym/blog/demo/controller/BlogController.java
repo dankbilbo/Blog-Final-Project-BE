@@ -1,6 +1,7 @@
 package com.codegym.blog.demo.controller;
 
 import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
+import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
@@ -35,8 +36,8 @@ public class BlogController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SystemResponse<BlogOut>> updateBlog(@PathVariable Long id,@RequestBody BlogAddIn blogAddIn){
-        return blogService.updateBlog(blogAddIn, id);
+    public ResponseEntity<SystemResponse<BlogOut>> updateBlog(@PathVariable Long id,@RequestBody BlogUpdateIn blogUpdateIn){
+        return blogService.updateBlog(blogUpdateIn, id);
     }
 
     @DeleteMapping("/{id}")

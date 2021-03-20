@@ -5,6 +5,7 @@ import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
+import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.repository.TagRepository;
@@ -59,10 +60,11 @@ public class MapEntityAndOut {
         blogOut.setTags(setTagsToString(blog.getTags()));
         blogOut.setViews(blog.getViews());
         blogOut.setPrivacy(blog.isPrivacy());
+        blogOut.setCategoryId(blog.getCategory().getId());
         return blogOut;
     }
 
-    public Blog mapBlogInAndEntity(BlogAddIn blogAddIn, User user, Category category) {
+    public Blog mapBlogAddInAndEntity(BlogAddIn blogAddIn, User user, Category category) {
         Blog blog = new Blog();
         blog.setTitle(blogAddIn.getTitle());
         blog.setContent(blogAddIn.getContent());
@@ -73,6 +75,15 @@ public class MapEntityAndOut {
         blog.setCreatedAt(LocalDateTime.now());
         blog.setTags(getTagBlog(blogAddIn.getTags()));
         blog.setUser(user);
+        return blog;
+    }
+
+    public Blog mapBlogUpdateInAndEntity(BlogUpdateIn blogUpdateIn,Blog blog) {
+        blog.setTitle(blogUpdateIn.getTitle());
+        blog.setContent(blogUpdateIn.getContent());
+        blog.setShortDescription(blogUpdateIn.getShortDescription());
+        blog.setPreviewImageURL(blogUpdateIn.getPreviewImageURL());
+        blog.setPrivacy(blogUpdateIn.isPrivacy());
         return blog;
     }
 

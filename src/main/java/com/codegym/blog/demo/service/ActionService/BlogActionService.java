@@ -1,6 +1,7 @@
 package com.codegym.blog.demo.service.ActionService;
 
 import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
+import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.SystemResponse;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface BlogActionService {
-    ResponseEntity<SystemResponse<BlogOut>> updateBlog(BlogAddIn blogAddIn, Long id);
+    ResponseEntity<SystemResponse<BlogOut>> updateBlog(BlogUpdateIn blogUpdateIn, Long id);
     ResponseEntity<SystemResponse<List<BlogOut>>> getALlPublicBlogs();
     ResponseEntity<SystemResponse<List<BlogOut>>> getAllPersonalBlog();
     ResponseEntity<SystemResponse<BlogOut>> getBlogById(Long id);
