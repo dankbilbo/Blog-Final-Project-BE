@@ -10,8 +10,9 @@ import com.codegym.blog.demo.model.Response;
 import com.codegym.blog.demo.model.SystemResponse;
 import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.security.PasswordEncoder;
-import com.codegym.blog.demo.service.ActionService.ActionService;
+import com.codegym.blog.demo.service.ActionService.UserActionService;
 import com.codegym.blog.demo.service.Interface.UserService;
+import com.codegym.blog.demo.service.MapEntityAndOut;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
-public class UserActionServiceImpl implements ActionService {
+public class UserActionServiceImpl implements UserActionService {
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
@@ -33,6 +34,9 @@ public class UserActionServiceImpl implements ActionService {
 
     @Autowired
     private final RoleRepository roleRepository;
+
+    @Autowired
+    private final MapEntityAndOut mapEntityAndOut;
 
     @Override
     public ResponseEntity<SystemResponse<UserOut>> signUp(UserSignUp userSignUp) {
@@ -55,6 +59,7 @@ public class UserActionServiceImpl implements ActionService {
 
         Set<UserRole> roles = new HashSet<>();
         roles.add(roleRepository.findByRoleName("MEMBER").get());
+
         User user = userService.save(
                 new User(userSignUp.getUsername()
                         ,userPassword
@@ -62,12 +67,18 @@ public class UserActionServiceImpl implements ActionService {
                         , LocalDateTime.now()
                         , roles
                         ));
+
+        UserOut userOut = mapEntityAndOut.mapUserEntityAndOut(user);
+
         return Response.ok(ErrorCodeMessage.CREATED
                 ,StringResponse.REGISTERED
-                ,new UserOut(user.getId()
-                        ,user.getUsername()
-                        ,user.getEmail()
-                        ,user.getRole()
-                        ,user.getCreatedAt()));
+                ,userOut);
     }
+
+    @Override
+    public ResponseEntity<SystemResponse<UserOut>> getUserById(Long id) {
+        return null;
+    }
+
+
 }

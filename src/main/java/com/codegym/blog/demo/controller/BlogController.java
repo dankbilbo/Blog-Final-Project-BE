@@ -50,5 +50,8 @@ public class BlogController {
         return blogService.getAllPersonalBlog();
     }
 
+//    @GetMapping("/personal/{id}")
+//    public
+
 
 }

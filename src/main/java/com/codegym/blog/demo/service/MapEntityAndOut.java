@@ -25,8 +25,30 @@ public class MapEntityAndOut {
     @Autowired
     private final TagService tagService;
 
-    public List<UserOut> mapListUserEntityAndOut(List<User> users, List<UserOut> userOuts) {
+    public List<UserOut> mapListUserEntityAndOut(List<User> users) {
+        List<UserOut> userOuts = new ArrayList<>();
+        for (User user : users) {
+            UserOut userOut = new UserOut(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getCreatedAt()
+            );
+            userOuts.add(userOut);
+        }
         return userOuts;
+    }
+
+    public UserOut mapUserEntityAndOut(User user) {
+        UserOut userOut = new UserOut(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt()
+        );
+        return userOut;
     }
 
     public List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs) {
@@ -78,7 +100,7 @@ public class MapEntityAndOut {
         return blog;
     }
 
-    public Blog mapBlogUpdateInAndEntity(BlogUpdateIn blogUpdateIn,Blog blog) {
+    public Blog mapBlogUpdateInAndEntity(BlogUpdateIn blogUpdateIn, Blog blog) {
         blog.setTitle(blogUpdateIn.getTitle());
         blog.setContent(blogUpdateIn.getContent());
         blog.setShortDescription(blogUpdateIn.getShortDescription());

@@ -6,7 +6,9 @@ import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.model.SystemResponse;
 import org.springframework.http.ResponseEntity;
 
-public interface ActionService {
+public interface UserActionService {
     ResponseEntity<SystemResponse<UserOut>> signUp(UserSignUp userSignUp);
+
+    ResponseEntity<SystemResponse<UserOut>> getUserById(Long id);
 
 }
