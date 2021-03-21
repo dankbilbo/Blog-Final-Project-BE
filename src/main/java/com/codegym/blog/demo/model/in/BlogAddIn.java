@@ -1,6 +1,5 @@
-package com.codegym.blog.demo.model.EntityIn;
+package com.codegym.blog.demo.model.in;
 
-import com.codegym.blog.demo.model.Entity.Category;
 import lombok.Data;
 
 @Data

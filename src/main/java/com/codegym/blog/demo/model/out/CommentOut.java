@@ -1,6 +1,4 @@
-package com.codegym.blog.demo.model.EntityOut;
-
-import java.time.LocalDateTime;
+package com.codegym.blog.demo.model.out;
 
 public class CommentOut {
     private String content;

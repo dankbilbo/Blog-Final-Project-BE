@@ -1,4 +1,4 @@
-package com.codegym.blog.demo.model;
+package com.codegym.blog.demo.model.response;
 
 import lombok.Data;
 

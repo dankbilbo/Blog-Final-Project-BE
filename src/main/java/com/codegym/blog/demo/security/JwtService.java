@@ -1,23 +1,58 @@
 package com.codegym.blog.demo.security;
 
 
+import com.codegym.blog.demo.model.Entity.JwtResponse;
+import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.Entity.UserPrincipal;
+import com.codegym.blog.demo.model.in.UserLogin;
+import com.codegym.blog.demo.repository.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @Service
 public class JwtService {
+
+    @Autowired
+    UserRepository userRepository;
+
     private static final String SECRET_KEY = "123456789123456789123456789123456789123456789";
     private static final long EXPIRE_KEY = 123456789L;
     public static final Logger logger = LoggerFactory.getLogger(JwtService.class.getName());
+
+    public ResponseEntity<?> login(UserLogin userLogin){
+        Optional<User> user = userRepository.findByUsername(userLogin.getUsername());
+        if (!user.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        if (!user.get().getPassword().equals(userLogin.getPassword())){
+            return ResponseEntity.notFound().build();
+        };
+
+        UserPrincipal userPrincipal = new UserPrincipal();
+        userPrincipal.setUsername(userLogin.getUsername());
+        userPrincipal.setPassword(userLogin.getPassword());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, userLogin.getPassword());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = generateAccessToken(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+    }
 
     public String generateAccessToken(Authentication authentication) {
         UserPrincipal userPrinciple = (UserPrincipal) authentication.getPrincipal();

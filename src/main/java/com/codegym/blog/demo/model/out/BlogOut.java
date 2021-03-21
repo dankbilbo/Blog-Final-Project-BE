@@ -1,11 +1,11 @@
-package com.codegym.blog.demo.model.EntityOut;
+package com.codegym.blog.demo.model.out;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class BlogOut extends BaseEntityOut{
+public class BlogOut {
     private Long id;
     private String title;
     private String content;
