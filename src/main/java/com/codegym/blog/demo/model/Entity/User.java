@@ -38,6 +38,10 @@ public class User  {
 
     private LocalDateTime createdAt;
 
+    private boolean locked = false;
+
+    private boolean enabled = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles"
             ,joinColumns = @JoinColumn(name="user_id")

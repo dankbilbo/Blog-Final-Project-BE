@@ -1,53 +1,217 @@
 package com.codegym.blog.demo.service.Impl;
 
+import com.codegym.blog.demo.Keywords.ErrorCodeMessage;
+import com.codegym.blog.demo.Keywords.StringResponse;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.Entity.UserPrincipal;
+import com.codegym.blog.demo.model.Entity.UserRole;
+import com.codegym.blog.demo.model.Entity.UserVerificationToken;
+import com.codegym.blog.demo.model.in.UserPasswordIn;
+import com.codegym.blog.demo.model.in.UserSignUp;
+import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.out.UserOut;
+import com.codegym.blog.demo.model.out.UserPasswordOut;
+import com.codegym.blog.demo.model.response.Response;
+import com.codegym.blog.demo.model.response.SystemResponse;
+import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.repository.UserRepository;
-import com.codegym.blog.demo.service.Interface.UserService;
+import com.codegym.blog.demo.repository.UserVerificationTokenRepository;
+import com.codegym.blog.demo.security.PasswordEncoder;
+import com.codegym.blog.demo.service.ActionService.UserService;
+import com.codegym.blog.demo.model.mapper.MapEntityAndOut;
+import com.codegym.blog.demo.service.Interface.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService,UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
+    private final RoleRepository roleRepository;
+
+    @Autowired
+    private final UserVerificationTokenRepository userVerificationTokenRepository;
+
+    @Autowired
+    private final EmailService emailService;
+
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public ResponseEntity<SystemResponse<String>> signUp(UserSignUp userSignUp) {
+        Optional<User> userFindByUsername = userRepository.findByUsername(userSignUp.getUsername());
+        if (userFindByUsername.isPresent()){
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.USERNAME_EXISTED);
+        }
+
+        Optional<User> userFindByEmail = userRepository.findByEmail(userSignUp.getEmail());
+        if (userFindByEmail.isPresent()){
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.EMAIL_EXISTED);
+        }
+        String userPassword = passwordEncoder.encoder().encode(userSignUp.getPassword());
+
+
+        Optional<UserRole> roleMember = roleRepository.findByRoleName("MEMBER");
+        if (!roleMember.isPresent()){
+            roleRepository.save(new UserRole("MEMBER"));
+        }
+
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(roleRepository.findByRoleName("MEMBER").get());
+
+        User user = userRepository.save(
+                new User(userSignUp.getUsername()
+                        ,userPassword
+                        ,userSignUp.getEmail()
+                        , LocalDateTime.now()
+                        , roles
+                        ));
+
+        String token = UUID.randomUUID().toString();
+
+        userVerificationTokenRepository.save(
+                new UserVerificationToken(
+                        token,
+                        LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(15),
+                        user
+                ));
+
+        sendVerificationEmail(token,userSignUp.getEmail());
+
+        return Response.ok(ErrorCodeMessage.CREATED,StringResponse.REGISTERED,userSignUp.getEmail());
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public ResponseEntity<SystemResponse<UserOut>> getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
+
+        UserOut userOut = MapEntityAndOut.mapUserEntityAndOut(user.get());
+
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,userOut);
     }
 
     @Override
-    public Optional<User> findByUsername(String name) {
-        return userRepository.findByUsername(name);
+    public ResponseEntity<SystemResponse<UserOut>> updateUser(UserUpdateIn userUpdateIn, Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+
+        User userEntitySaved = userRepository.save(MapEntityAndOut.mapUserUpdateInAndUserEntity(userUpdateIn,user.get()));
+
+        UserOut userOut = MapEntityAndOut.mapUserEntityAndOut(userEntitySaved);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.USER_UPDATED,userOut);
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
-    }
+    public ResponseEntity<SystemResponse<String>> deleteUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
 
-    @Override
-    public void deleteById(Long id) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+
         userRepository.deleteById(id);
+
+        return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_DELETED);
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public ResponseEntity<SystemResponse<UserPasswordOut>> changePassword(UserPasswordIn userPasswordIn, Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+        User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn,user.get());
+        userRepository.save(userEntityIn);
+
+        UserPasswordOut userPasswordOut = MapEntityAndOut.mapUserPasswordAndOut(userEntityIn);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,userPasswordOut);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<String>> verify(String token) {
+        Optional<UserVerificationToken> verificationToken
+                = userVerificationTokenRepository.findByToken(token);
+
+        if (!verificationToken.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.TOKEN_NOT_EXISTED);
+        }
+        if (verificationToken.get().getVerifiedAt() != null){
+            return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_VERIFIED_ALREADY);
+        }
+
+        LocalDateTime expiredAt = verificationToken.get().getExpiredAt();
+
+        if (expiredAt.isBefore(LocalDateTime.now())){
+            return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.TOKEN_EXPIRED);
+        }
+
+        userVerificationTokenRepository.verifyToken(LocalDateTime.now(),token);
+
+        userRepository.enabledUserByEmail(verificationToken.get().getUser().getEmail());
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.VERIFY_SUCCESS,verificationToken.get().getUser().getUsername());
+    }
+
+
+    private void sendVerificationEmail(String token, String email) {
+        String linkVerify = "http://localhost:8080/register/" + token;
+        String content = "please verify your account by clicking this link " + linkVerify;
+        String topic = "Pro Hub verify account";
+        emailService.sendEmail(email,content,topic);
     }
 
     @Override

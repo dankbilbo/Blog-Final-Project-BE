@@ -5,7 +5,7 @@ import com.codegym.blog.demo.model.in.UserUpdateIn;
 import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
-import com.codegym.blog.demo.service.ActionService.UserActionService;
+import com.codegym.blog.demo.service.ActionService.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +17,25 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
     @Autowired
-    private final UserActionService userActionService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<SystemResponse<UserOut>> getUser(@PathVariable Long id){
-        return userActionService.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<SystemResponse<UserOut>> updateUserProfile(@PathVariable Long id, @RequestBody UserUpdateIn userUpdateIn){
-        return userActionService.updateUser(userUpdateIn,id);
+        return userService.updateUser(userUpdateIn,id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SystemResponse<String>> deleteUser(@PathVariable Long id){
-        return userActionService.deleteUser(id);
+        return userService.deleteUser(id);
     }
 
     @PatchMapping("/{id}/password")
     public ResponseEntity<SystemResponse<UserPasswordOut>> updateUserProfile(@PathVariable Long id, @RequestBody UserPasswordIn userPasswordIn){
-        return userActionService.changePassword(userPasswordIn,id);
+        return userService.changePassword(userPasswordIn,id);
     }
 }

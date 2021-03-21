@@ -1,8 +1,9 @@
 package com.codegym.blog.demo.security;
 
 import com.codegym.blog.demo.model.Entity.User;
+import com.codegym.blog.demo.repository.UserRepository;
+import com.codegym.blog.demo.service.ActionService.UserService;
 import com.codegym.blog.demo.service.Impl.UserServiceImpl;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.PostConstruct;
-import javax.crypto.SecretKey;
 import java.util.List;
 
 @Configuration
@@ -28,17 +28,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     UserServiceImpl userService;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
 
     @PostConstruct
     public void init() {
-        List<User> users = (List<User>) userService.findAll();
+        List<User> users = (List<User>) userRepository.findAll();
         if (users.isEmpty()) {
             User user = new User();
             user.setUsername("admin");
             user.setPassword(passwordEncoder.encoder().encode("admin"));
-            userService.save(user);
+            userRepository.save(user);
         }
     }
 

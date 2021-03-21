@@ -15,4 +15,8 @@ public class StringResponse {
     public static String CATEGORY_EXISTED = "category existed";
     public static String USER_UPDATED = "user updated";
     public static String USER_DELETED = "user deleted";
+    public static String TOKEN_NOT_EXISTED = "verification token not existed";
+    public static String USER_VERIFIED_ALREADY = "user verified already";
+    public static String TOKEN_EXPIRED = "verification token expired";
+    public static String VERIFY_SUCCESS = "user verify success";
 }
