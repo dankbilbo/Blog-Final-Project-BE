@@ -1,9 +1,10 @@
 package com.codegym.blog.demo.controller;
 
-import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
-import com.codegym.blog.demo.model.EntityOut.UserOut;
-import com.codegym.blog.demo.model.Response;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.in.UserPasswordIn;
+import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.out.UserOut;
+import com.codegym.blog.demo.model.out.UserPasswordOut;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,4 +29,13 @@ public class UserController {
         return userActionService.updateUser(userUpdateIn,id);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SystemResponse<String>> deleteUser(@PathVariable Long id){
+        return userActionService.deleteUser(id);
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<SystemResponse<UserPasswordOut>> updateUserProfile(@PathVariable Long id, @RequestBody UserPasswordIn userPasswordIn){
+        return userActionService.changePassword(userPasswordIn,id);
+    }
 }

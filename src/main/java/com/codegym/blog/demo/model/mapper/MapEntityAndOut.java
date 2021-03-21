@@ -1,14 +1,16 @@
-package com.codegym.blog.demo.service;
+package com.codegym.blog.demo.model.mapper;
 
 import com.codegym.blog.demo.model.Entity.Blog;
 import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
-import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
-import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
-import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
-import com.codegym.blog.demo.model.EntityOut.BlogOut;
-import com.codegym.blog.demo.model.EntityOut.UserOut;
+import com.codegym.blog.demo.model.in.BlogAddIn;
+import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.in.UserPasswordIn;
+import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.out.UserOut;
+import com.codegym.blog.demo.model.out.UserPasswordOut;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,15 @@ public class MapEntityAndOut {
         return userOuts;
     }
 
+    public static User mapUserPasswordInAndEntity(UserPasswordIn userPasswordIn, User user) {
+        user.setPassword(userPasswordIn.getPassword());
+        return user;
+    }
+
+    public static UserPasswordOut mapUserPasswordAndOut(User user){
+        return new UserPasswordOut(user.getPassword());
+    }
+
     public static UserOut mapUserEntityAndOut(User user) {
         UserOut userOut = new UserOut(
                 user.getId(),
@@ -51,7 +62,7 @@ public class MapEntityAndOut {
         return userOut;
     }
 
-    public static User mapUserUpdateInAndUserEntity(UserUpdateIn userUpdateIn, User user){
+    public static User mapUserUpdateInAndUserEntity(UserUpdateIn userUpdateIn, User user) {
         user.setFirstName(userUpdateIn.getFirstName());
         user.setLastName(userUpdateIn.getLastName());
         user.setAvatarURL(userUpdateIn.getAvatarURL());
@@ -95,7 +106,7 @@ public class MapEntityAndOut {
         return blogOut;
     }
 
-    public static Blog mapBlogAddInAndEntity(BlogAddIn blogAddIn, User user, Category category,Set<Tag> tags) {
+    public static Blog mapBlogAddInAndEntity(BlogAddIn blogAddIn, User user, Category category, Set<Tag> tags) {
         Blog blog = new Blog();
         blog.setTitle(blogAddIn.getTitle());
         blog.setContent(blogAddIn.getContent());

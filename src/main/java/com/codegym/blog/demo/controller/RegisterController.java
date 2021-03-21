@@ -1,8 +1,8 @@
 package com.codegym.blog.demo.controller;
 
-import com.codegym.blog.demo.model.EntityIn.UserSignUp;
-import com.codegym.blog.demo.model.EntityOut.UserOut;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.in.UserSignUp;
+import com.codegym.blog.demo.model.out.UserOut;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

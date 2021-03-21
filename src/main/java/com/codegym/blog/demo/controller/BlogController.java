@@ -1,9 +1,9 @@
 package com.codegym.blog.demo.controller;
 
-import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
-import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
-import com.codegym.blog.demo.model.EntityOut.BlogOut;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.in.BlogAddIn;
+import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

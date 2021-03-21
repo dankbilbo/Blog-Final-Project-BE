@@ -6,20 +6,17 @@ import com.codegym.blog.demo.model.Entity.Blog;
 import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
-import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
-import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
-import com.codegym.blog.demo.model.EntityOut.BlogOut;
-import com.codegym.blog.demo.model.Response;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.in.BlogAddIn;
+import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.response.Response;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.repository.BlogRepository;
 import com.codegym.blog.demo.repository.CategoryRepository;
 import com.codegym.blog.demo.repository.UserRepository;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
-import com.codegym.blog.demo.service.Interface.BlogService;
-import com.codegym.blog.demo.service.Interface.CategoryService;
 import com.codegym.blog.demo.service.Interface.TagService;
-import com.codegym.blog.demo.service.Interface.UserService;
-import com.codegym.blog.demo.service.MapEntityAndOut;
+import com.codegym.blog.demo.model.mapper.MapEntityAndOut;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,11 +54,11 @@ public class ActionBlogServiceImpl implements BlogActionService {
         User user = blog.get().getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Collection authority = authentication.getAuthorities();
 
-        if (!username.equals(user.getUsername())
-                && blog.get().isPrivacy() == false
-                && !authority.stream().filter(role->role.equals("ADMIN")).findAny().isPresent()) {
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.getUsername());
+
+        if (!(correctUser && isAdmin)) {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
@@ -108,11 +105,10 @@ public class ActionBlogServiceImpl implements BlogActionService {
         User user = blog.get().getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Collection authority = authentication.getAuthorities();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.getUsername());
 
-        if (!username.equals(user.getUsername())
-                && blog.get().isPrivacy() == false
-                && !authority.stream().filter(role->role.equals("ADMIN")).findAny().isPresent()) {
+        if (!(correctUser && isAdmin) && blog.get().isPrivacy() == false) {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
@@ -154,11 +150,11 @@ public class ActionBlogServiceImpl implements BlogActionService {
         User user = blog.get().getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Collection authority = authentication.getAuthorities();
 
-        if (!username.equals(user.getUsername())
-                && blog.get().isPrivacy() == false
-                && !!authority.stream().filter(role->role.equals("ADMIN")).findAny().isPresent()) {
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.getUsername());
+
+        if (!(correctUser && isAdmin)) {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 

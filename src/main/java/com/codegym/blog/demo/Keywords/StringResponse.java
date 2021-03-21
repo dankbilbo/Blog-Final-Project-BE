@@ -14,4 +14,5 @@ public class StringResponse {
     public static String USER_NOT_FOUND = "user not found";
     public static String CATEGORY_EXISTED = "category existed";
     public static String USER_UPDATED = "user updated";
+    public static String USER_DELETED = "user deleted";
 }

@@ -4,27 +4,26 @@ import com.codegym.blog.demo.Keywords.ErrorCodeMessage;
 import com.codegym.blog.demo.Keywords.StringResponse;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.Entity.UserRole;
-import com.codegym.blog.demo.model.EntityIn.UserSignUp;
-import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
-import com.codegym.blog.demo.model.EntityOut.UserOut;
-import com.codegym.blog.demo.model.Response;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.in.UserPasswordIn;
+import com.codegym.blog.demo.model.in.UserSignUp;
+import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.out.UserOut;
+import com.codegym.blog.demo.model.out.UserPasswordOut;
+import com.codegym.blog.demo.model.response.Response;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.repository.UserRepository;
 import com.codegym.blog.demo.security.PasswordEncoder;
 import com.codegym.blog.demo.service.ActionService.UserActionService;
-import com.codegym.blog.demo.service.Interface.UserService;
-import com.codegym.blog.demo.service.MapEntityAndOut;
+import com.codegym.blog.demo.model.mapper.MapEntityAndOut;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -100,9 +99,11 @@ public class UserActionServiceImpl implements UserActionService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Collection authority = authentication.getAuthorities();
-        if (!username.equals(user.get().getUsername())
-                && !authority.stream().filter(role->role.equals("ADMIN")).findAny().isPresent()) {
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
@@ -113,8 +114,50 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public ResponseEntity<SystemResponse<UserOut>> deleteUser(Long id) {
-        return null;
+    public ResponseEntity<SystemResponse<String>> deleteUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+
+        userRepository.deleteById(id);
+
+        return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_DELETED);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<UserPasswordOut>> changePassword(UserPasswordIn userPasswordIn, Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        }
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean correctUser = username.equals(user.get().getUsername());
+
+        if (!(correctUser
+                || isAdmin)) {
+            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+        }
+        User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn,user.get());
+        userRepository.save(userEntityIn);
+
+        UserPasswordOut userPasswordOut = MapEntityAndOut.mapUserPasswordAndOut(userEntityIn);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,userPasswordOut);
     }
 
 

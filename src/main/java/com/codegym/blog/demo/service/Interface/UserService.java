@@ -1,8 +1,6 @@
 package com.codegym.blog.demo.service.Interface;
 
 import com.codegym.blog.demo.model.Entity.User;
-import com.codegym.blog.demo.model.EntityIn.UserSignUp;
-import com.codegym.blog.demo.model.Response;
 
 import java.util.Optional;
 

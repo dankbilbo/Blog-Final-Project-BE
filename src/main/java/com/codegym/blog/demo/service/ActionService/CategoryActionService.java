@@ -1,11 +1,10 @@
 package com.codegym.blog.demo.service.ActionService;
 
 import com.codegym.blog.demo.model.Entity.Category;
-import com.codegym.blog.demo.model.SystemResponse;
+import com.codegym.blog.demo.model.response.SystemResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryActionService {
 

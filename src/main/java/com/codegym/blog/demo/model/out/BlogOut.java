@@ -1,4 +1,4 @@
-package com.codegym.blog.demo.model.EntityOut;
+package com.codegym.blog.demo.model.out;
 
 import lombok.Data;
 
