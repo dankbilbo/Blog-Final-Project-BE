@@ -11,6 +11,7 @@ public class StringResponse {
     public static String BLOD_UPDATED = "blog updated";
     public static String BLOG_DELETED = "blog deleted";
     public static String NOT_FOUND = "not found";
-
+    public static String USER_NOT_FOUND = "user not found";
     public static String CATEGORY_EXISTED = "category existed";
+    public static String USER_UPDATED = "user updated";
 }

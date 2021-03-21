@@ -6,32 +6,29 @@ import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.EntityIn.BlogAddIn;
 import com.codegym.blog.demo.model.EntityIn.BlogUpdateIn;
+import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
-import com.codegym.blog.demo.repository.TagRepository;
-import com.codegym.blog.demo.service.Interface.TagService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class MapEntityAndOut {
 
-    @Autowired
-    private final TagService tagService;
-
-    public List<UserOut> mapListUserEntityAndOut(List<User> users) {
+    public static List<UserOut> mapListUserEntityAndOut(List<User> users) {
         List<UserOut> userOuts = new ArrayList<>();
         for (User user : users) {
             UserOut userOut = new UserOut(
                     user.getId(),
                     user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
                     user.getEmail(),
+                    user.getAvatarURL(),
                     user.getRole(),
                     user.getCreatedAt()
             );
@@ -40,18 +37,29 @@ public class MapEntityAndOut {
         return userOuts;
     }
 
-    public UserOut mapUserEntityAndOut(User user) {
+    public static UserOut mapUserEntityAndOut(User user) {
         UserOut userOut = new UserOut(
                 user.getId(),
                 user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getEmail(),
+                user.getAvatarURL(),
                 user.getRole(),
                 user.getCreatedAt()
         );
         return userOut;
     }
 
-    public List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs) {
+    public static User mapUserUpdateInAndUserEntity(UserUpdateIn userUpdateIn, User user){
+        user.setFirstName(userUpdateIn.getFirstName());
+        user.setLastName(userUpdateIn.getLastName());
+        user.setAvatarURL(userUpdateIn.getAvatarURL());
+        user.setEmail(userUpdateIn.getEmail());
+        return user;
+    }
+
+    public static List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs) {
         List<BlogOut> blogOuts = new ArrayList<>();
         for (Blog blog : blogs) {
             BlogOut blogOut = new BlogOut();
@@ -65,12 +73,13 @@ public class MapEntityAndOut {
             blogOut.setPrivacy(blog.isPrivacy());
             blogOut.setTags(setTagsToString(blog.getTags()));
             blogOut.setViews(blog.getViews());
+            blogOut.setCategoryId(blog.getCategory().getId());
             blogOuts.add(blogOut);
         }
         return blogOuts;
     }
 
-    public BlogOut mapBlogEntityAndOut(Blog blog) {
+    public static BlogOut mapBlogEntityAndOut(Blog blog) {
         BlogOut blogOut = new BlogOut();
         blogOut.setId(blog.getId());
         blogOut.setTitle(blog.getTitle());
@@ -86,7 +95,7 @@ public class MapEntityAndOut {
         return blogOut;
     }
 
-    public Blog mapBlogAddInAndEntity(BlogAddIn blogAddIn, User user, Category category) {
+    public static Blog mapBlogAddInAndEntity(BlogAddIn blogAddIn, User user, Category category,Set<Tag> tags) {
         Blog blog = new Blog();
         blog.setTitle(blogAddIn.getTitle());
         blog.setContent(blogAddIn.getContent());
@@ -95,12 +104,12 @@ public class MapEntityAndOut {
         blog.setCategory(category);
         blog.setPrivacy(blogAddIn.isPrivacy());
         blog.setCreatedAt(LocalDateTime.now());
-        blog.setTags(getTagBlog(blogAddIn.getTags()));
+        blog.setTags(tags);
         blog.setUser(user);
         return blog;
     }
 
-    public Blog mapBlogUpdateInAndEntity(BlogUpdateIn blogUpdateIn, Blog blog) {
+    public static Blog mapBlogUpdateInAndEntity(BlogUpdateIn blogUpdateIn, Blog blog) {
         blog.setTitle(blogUpdateIn.getTitle());
         blog.setContent(blogUpdateIn.getContent());
         blog.setShortDescription(blogUpdateIn.getShortDescription());
@@ -109,25 +118,13 @@ public class MapEntityAndOut {
         return blog;
     }
 
-    Set<Tag> getTagBlog(String tags) {
-        Set<String> tagsSplit = new HashSet<>(Arrays.asList(tags.split(",")));
-        Set<Tag> blogTags = new HashSet<>();
-        for (String tag : tagsSplit) {
-            boolean tagExistedInDB = tagService.findByName(tag).isPresent();
-            if (!tagExistedInDB) {
-                tagService.save(new Tag(tag, LocalDateTime.now()));
-            }
-            blogTags.add(tagService.findByName(tag).get());
-        }
-        return blogTags;
-    }
-
-    String setTagsToString(Set<Tag> tags) {
+    private static String setTagsToString(Set<Tag> tags) {
         ArrayList<String> tagNameCollect = new ArrayList<>();
         for (Tag tag : tags) {
             tagNameCollect.add(tag.getName());
         }
         return String.join(",", tagNameCollect);
-
     }
+
+
 }

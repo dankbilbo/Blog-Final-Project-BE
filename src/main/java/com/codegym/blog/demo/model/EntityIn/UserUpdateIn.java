@@ -3,12 +3,10 @@ package com.codegym.blog.demo.model.EntityIn;
 import lombok.Data;
 
 @Data
-public class UserChangeProfile {
-    private String firstname;
+public class UserUpdateIn {
+    private String firstName;
 
     private String lastName;
-
-    private String password;
 
     private String email;
 

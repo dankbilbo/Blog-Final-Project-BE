@@ -1,6 +1,7 @@
 package com.codegym.blog.demo.service.ActionService;
 
 import com.codegym.blog.demo.model.EntityIn.UserSignUp;
+import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.BlogOut;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.model.SystemResponse;
@@ -10,5 +11,11 @@ public interface UserActionService {
     ResponseEntity<SystemResponse<UserOut>> signUp(UserSignUp userSignUp);
 
     ResponseEntity<SystemResponse<UserOut>> getUserById(Long id);
+
+    ResponseEntity<SystemResponse<UserOut>> updateUser(UserUpdateIn userUpdateIn,Long id);
+
+    ResponseEntity<SystemResponse<UserOut>> deleteUser(Long id);
+
+
 
 }

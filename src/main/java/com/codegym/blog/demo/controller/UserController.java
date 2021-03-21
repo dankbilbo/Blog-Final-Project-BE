@@ -1,5 +1,6 @@
 package com.codegym.blog.demo.controller;
 
+import com.codegym.blog.demo.model.EntityIn.UserUpdateIn;
 import com.codegym.blog.demo.model.EntityOut.UserOut;
 import com.codegym.blog.demo.model.Response;
 import com.codegym.blog.demo.model.SystemResponse;
@@ -21,4 +22,10 @@ public class UserController {
     public ResponseEntity<SystemResponse<UserOut>> getUser(@PathVariable Long id){
         return userActionService.getUserById(id);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SystemResponse<UserOut>> updateUserProfile(@PathVariable Long id, @RequestBody UserUpdateIn userUpdateIn){
+        return userActionService.updateUser(userUpdateIn,id);
+    }
+
 }
