@@ -21,8 +21,9 @@ public class UserPrincipal implements UserDetails {
     private String username;
     private String password;
     private String email;
+    private boolean locked;
+    private boolean enabled;
     private Collection authorities;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -46,7 +47,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public static UserPrincipal build(User user){
@@ -69,6 +70,8 @@ public class UserPrincipal implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
+                user.isLocked(),
+                user.isEnabled(),
                 authorities
         );
     }

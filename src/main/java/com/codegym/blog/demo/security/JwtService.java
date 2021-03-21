@@ -10,6 +10,7 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,9 @@ import java.util.Optional;
 public class JwtService {
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     UserRepository userRepository;
 
     private static final String SECRET_KEY = "123456789123456789123456789123456789123456789";
@@ -35,15 +39,22 @@ public class JwtService {
     public ResponseEntity<?> login(UserLogin userLogin){
         Optional<User> user = userRepository.findByUsername(userLogin.getUsername());
         if (!user.isPresent()){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("username not found");
         }
-        if (!user.get().getPassword().equals(userLogin.getPassword())){
-            return ResponseEntity.notFound().build();
+        String passwordDb = user.get().getPassword();
+        String passwordIn = passwordEncoder.encoder().encode(userLogin.getPassword());
+        if (passwordEncoder.encoder().matches(passwordDb,passwordIn)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrect");
         };
 
-        UserPrincipal userPrincipal = new UserPrincipal();
-        userPrincipal.setUsername(userLogin.getUsername());
-        userPrincipal.setPassword(userLogin.getPassword());
+        UserPrincipal userPrincipal = UserPrincipal.build(user.get());
+
+        if (!userPrincipal.isEnabled()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("please verify your account at " + user.get().getEmail());
+        }
+        if (!userPrincipal.isAccountNonLocked()){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("your account has been banned");
+        };
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, userLogin.getPassword());
 
