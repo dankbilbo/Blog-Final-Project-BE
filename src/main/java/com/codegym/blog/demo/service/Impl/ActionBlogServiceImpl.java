@@ -8,6 +8,7 @@ import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.in.BlogAddIn;
 import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.in.SearchBlogIn;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
@@ -162,9 +163,15 @@ public class ActionBlogServiceImpl implements BlogActionService {
         return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.BLOG_DELETED);
     }
 
-//    ResponseEntity<SystemResponse<BlogOut>> checkUser(Optional<Blog> blogOptional){
-//
-//    }
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> findByTitleOrShortDescription(SearchBlogIn searchBlogIn) {
+        List<Blog> searchedBlog = blogRepository.search("%" + searchBlogIn.getSearchKey() + "%");
+        if (searchedBlog.isEmpty()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+        List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(searchedBlog);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+    }
 
     private Set<Tag> getTagBlog(String tags) {
         Set<String> tagsSplit = new HashSet<>(Arrays.asList(tags.split(",")));
