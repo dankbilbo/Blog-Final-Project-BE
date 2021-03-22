@@ -35,8 +35,9 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
     @Override
     public ResponseEntity<SystemResponse<Category>> createCategory(Category category) {
         List<Category> categories = categoryService.findAll();
+//        categories.stream().anyMatch(category1->category1.getName().equals(category.getName()));
         for (Category c : categories) {
-            if (c.equals(category)) {
+            if (c.getName().equals(category.getName())) {
                 return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.CATEGORY_EXISTED);
             }
             categoryService.save(category);

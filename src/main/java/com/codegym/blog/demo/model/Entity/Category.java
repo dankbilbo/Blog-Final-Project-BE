@@ -16,13 +16,10 @@ public class Category{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "Please enter name")
     private String name;
-
     private LocalDateTime createdAt;
 
-    public Category(@NotBlank(message = "Please enter name") String name, LocalDateTime createdAt) {
+    public Category(String name, LocalDateTime createdAt) {
         this.name = name;
         this.createdAt = createdAt;
     }

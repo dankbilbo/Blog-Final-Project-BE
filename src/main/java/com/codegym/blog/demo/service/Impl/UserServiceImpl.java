@@ -31,10 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -55,21 +52,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final EmailService emailService;
 
     @Override
+    public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {
+        List<User> users = userRepository.findAll();
+        if (users.isEmpty()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        if (!isAdmin) {
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
+        }
+        List<UserOut> userOuts = MapEntityAndOut.mapListUserEntityAndOut(users);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, userOuts);
+    }
+
+    @Override
     public ResponseEntity<SystemResponse<String>> signUp(UserSignUp userSignUp) {
         Optional<User> userFindByUsername = userRepository.findByUsername(userSignUp.getUsername());
-        if (userFindByUsername.isPresent()){
-            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.USERNAME_EXISTED);
+        if (userFindByUsername.isPresent()) {
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST, StringResponse.USERNAME_EXISTED);
         }
 
         Optional<User> userFindByEmail = userRepository.findByEmail(userSignUp.getEmail());
-        if (userFindByEmail.isPresent()){
-            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.EMAIL_EXISTED);
+        if (userFindByEmail.isPresent()) {
+            return Response.bad_request(ErrorCodeMessage.BAD_REQUEST, StringResponse.EMAIL_EXISTED);
         }
         String userPassword = passwordEncoder.encoder().encode(userSignUp.getPassword());
 
 
         Optional<UserRole> roleMember = roleRepository.findByRoleName("MEMBER");
-        if (!roleMember.isPresent()){
+        if (!roleMember.isPresent()) {
             roleRepository.save(new UserRole("MEMBER"));
         }
 
@@ -78,11 +90,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         User user = userRepository.save(
                 new User(userSignUp.getUsername()
-                        ,userPassword
-                        ,userSignUp.getEmail()
+                        , userPassword
+                        , userSignUp.getEmail()
                         , LocalDateTime.now()
                         , roles
-                        ));
+                ));
 
         String token = UUID.randomUUID().toString();
 
@@ -94,30 +106,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                         user
                 ));
 
-        sendVerificationEmail(token,userSignUp.getEmail());
+        sendVerificationEmail(token, userSignUp.getEmail());
 
-        return Response.ok(ErrorCodeMessage.CREATED,StringResponse.REGISTERED,userSignUp.getEmail());
+        return Response.ok(ErrorCodeMessage.CREATED, StringResponse.REGISTERED, userSignUp.getEmail());
     }
 
     @Override
     public ResponseEntity<SystemResponse<UserOut>> getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
         }
 
         UserOut userOut = MapEntityAndOut.mapUserEntityAndOut(user.get());
 
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,userOut);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, userOut);
     }
 
     @Override
     public ResponseEntity<SystemResponse<UserOut>> updateUser(UserUpdateIn userUpdateIn, Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
         }
-
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -129,17 +140,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
-        User userEntitySaved = userRepository.save(MapEntityAndOut.mapUserUpdateInAndUserEntity(userUpdateIn,user.get()));
+        User userEntitySaved = userRepository.save(MapEntityAndOut.mapUserUpdateInAndUserEntity(userUpdateIn, user.get()));
 
         UserOut userOut = MapEntityAndOut.mapUserEntityAndOut(userEntitySaved);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.USER_UPDATED,userOut);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.USER_UPDATED, userOut);
     }
 
     @Override
     public ResponseEntity<SystemResponse<String>> deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
         }
 
 
@@ -155,14 +166,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         userRepository.deleteById(id);
 
-        return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_DELETED);
+        return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.USER_DELETED);
     }
 
     @Override
     public ResponseEntity<SystemResponse<UserPasswordOut>> changePassword(UserPasswordIn userPasswordIn, Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.USER_NOT_FOUND);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
         }
 
 
@@ -175,11 +186,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 || isAdmin)) {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
-        User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn,user.get());
+        User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn, user.get());
         userRepository.save(userEntityIn);
 
         UserPasswordOut userPasswordOut = MapEntityAndOut.mapUserPasswordAndOut(userEntityIn);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,userPasswordOut);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, userPasswordOut);
     }
 
     @Override
@@ -187,23 +198,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Optional<UserVerificationToken> verificationToken
                 = userVerificationTokenRepository.findByToken(token);
 
-        if (!verificationToken.isPresent()){
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.TOKEN_NOT_EXISTED);
+        if (!verificationToken.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.TOKEN_NOT_EXISTED);
         }
-        if (verificationToken.get().getVerifiedAt() != null){
-            return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_VERIFIED_ALREADY);
+        if (verificationToken.get().getVerifiedAt() != null) {
+            return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.USER_VERIFIED_ALREADY);
         }
 
         LocalDateTime expiredAt = verificationToken.get().getExpiredAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())){
-            return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.TOKEN_EXPIRED);
+        if (expiredAt.isBefore(LocalDateTime.now())) {
+            return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.TOKEN_EXPIRED);
         }
 
-        userVerificationTokenRepository.verifyToken(LocalDateTime.now(),token);
+        userVerificationTokenRepository.verifyToken(LocalDateTime.now(), token);
 
         userRepository.enabledUserByEmail(verificationToken.get().getUser().getEmail());
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.VERIFY_SUCCESS,verificationToken.get().getUser().getUsername());
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.VERIFY_SUCCESS, verificationToken.get().getUser().getUsername());
     }
 
 
@@ -211,7 +222,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String linkVerify = "http://localhost:8080/register/" + token;
         String content = "please verify your account by clicking this link " + linkVerify;
         String topic = "Pro Hub verify account";
-        emailService.sendEmail(email,content,topic);
+        emailService.sendEmail(email, content, topic);
     }
 
     @Override

@@ -8,4 +8,6 @@ public class ErrorCodeMessage {
     public static int NOT_AUTHORIZED = 403;
     public static int NO_CONTENT = 204;
     public static int BAD_REQUEST = 400;
+    public static int FORBIDDEN = 403;
+
 }
