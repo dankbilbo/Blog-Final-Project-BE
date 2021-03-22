@@ -85,8 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/blogs/personal").hasAnyAuthority("MEMBER","ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/profile").hasAnyAuthority("MEMBER","ADMIN")
                 .antMatchers("/admin").hasAnyAuthority("ADMIN")
-                .anyRequest()
-                .authenticated()
                 .and().csrf().disable();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());

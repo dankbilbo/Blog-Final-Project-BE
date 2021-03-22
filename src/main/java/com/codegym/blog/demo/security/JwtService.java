@@ -42,8 +42,7 @@ public class JwtService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("username not found");
         }
         String passwordDb = user.get().getPassword();
-        String passwordIn = passwordEncoder.encoder().encode(userLogin.getPassword());
-        if (passwordEncoder.encoder().matches(passwordDb,passwordIn)){
+        if (!passwordEncoder.encoder().matches(userLogin.getPassword(),passwordDb)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrect");
         };
 
