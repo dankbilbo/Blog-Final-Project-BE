@@ -1,8 +1,11 @@
 package com.codegym.blog.demo.security;
 
 import com.codegym.blog.demo.service.ActionService.UserService;
+import com.codegym.blog.demo.service.Impl.UserServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,7 +22,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
-    private UserDetailsService userService;
+    @Autowired
+    private UserServiceImpl userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             }
         } catch (Exception e) {
             logger.error("Can NOT set user authentication -> Message: {}", e);
