@@ -2,6 +2,8 @@ package com.codegym.blog.demo.model.in;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+
 @Data
 public class BlogAddIn {
     private String title;
