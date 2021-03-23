@@ -2,9 +2,11 @@ package com.codegym.blog.demo.controller;
 
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
+import com.codegym.blog.demo.service.ActionService.BlogActionService;
 import com.codegym.blog.demo.service.ActionService.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,6 +30,9 @@ public class UserController {
     @Autowired
     private final UserService userService;
 
+    @Autowired
+    private final BlogActionService blogService;
+
     @GetMapping("/{id}")
     public ResponseEntity<SystemResponse<UserOut>> getUser(@PathVariable Long id) {
         return userService.getUserById(id);
@@ -46,5 +51,15 @@ public class UserController {
     @PatchMapping("/{id}/password")
     public ResponseEntity<SystemResponse<UserPasswordOut>> updateUserProfile(@PathVariable Long id, @RequestBody UserPasswordIn userPasswordIn) {
         return userService.changePassword(userPasswordIn, id);
+    }
+
+    @GetMapping("/{id}/blogs")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getPersonalBlogs() {
+        return blogService.getAllPersonalBlog();
+    }
+
+    @GetMapping
+    public ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs() {
+        return null;
     }
 }

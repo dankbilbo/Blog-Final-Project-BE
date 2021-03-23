@@ -61,7 +61,7 @@ public class JwtService {
 
         String jwt = generateAccessToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+        return ResponseEntity.ok(new JwtResponse(user.get().getId(),jwt, userDetails.getUsername(), userDetails.getAuthorities()));
     }
 
     public String generateAccessToken(Authentication authentication) {
