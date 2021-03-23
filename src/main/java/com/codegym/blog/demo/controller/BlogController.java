@@ -2,8 +2,10 @@ package com.codegym.blog.demo.controller;
 
 import com.codegym.blog.demo.model.in.BlogAddIn;
 import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.in.CommentIn;
 import com.codegym.blog.demo.model.in.SearchBlogIn;
 import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.out.CommentOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
 import lombok.AllArgsConstructor;
@@ -46,14 +48,14 @@ public class BlogController {
         return blogService.deleteBlog(id);
     }
 
-    @GetMapping("/personal")
-    public ResponseEntity<SystemResponse<List<BlogOut>>> getPersonalBlogs() {
-        return blogService.getAllPersonalBlog();
-    }
-
     @GetMapping("/search")
     public ResponseEntity<SystemResponse<List<BlogOut>>> searchByTitleOrShortDescription(@RequestBody SearchBlogIn searchBlogIn) {
         return blogService.findByTitleOrShortDescription(searchBlogIn);
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<SystemResponse<CommentOut>> comment(@PathVariable Long id,@RequestBody CommentIn commentIn){
+        return blogService.comment(id,commentIn);
     }
 
 

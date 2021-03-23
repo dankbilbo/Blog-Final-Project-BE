@@ -42,8 +42,7 @@ public class JwtService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("username not found");
         }
         String passwordDb = user.get().getPassword();
-        String passwordIn = passwordEncoder.encoder().encode(userLogin.getPassword());
-        if (passwordEncoder.encoder().matches(passwordDb,passwordIn)){
+        if (!passwordEncoder.encoder().matches(userLogin.getPassword(),passwordDb)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrect");
         };
 
@@ -62,7 +61,7 @@ public class JwtService {
 
         String jwt = generateAccessToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+        return ResponseEntity.ok(new JwtResponse(user.get().getId(),jwt, userDetails.getUsername(), userDetails.getAuthorities()));
     }
 
     public String generateAccessToken(Authentication authentication) {

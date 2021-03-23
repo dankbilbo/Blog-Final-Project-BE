@@ -8,8 +8,10 @@ import com.codegym.blog.demo.model.Entity.Tag;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.in.BlogAddIn;
 import com.codegym.blog.demo.model.in.BlogUpdateIn;
+import com.codegym.blog.demo.model.in.CommentIn;
 import com.codegym.blog.demo.model.in.SearchBlogIn;
 import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.out.CommentOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.repository.BlogRepository;
@@ -171,6 +173,35 @@ public class ActionBlogServiceImpl implements BlogActionService {
         }
         List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(searchedBlog);
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs(SearchBlogIn searchBlogIn) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        List<Blog> blogs = blogRepository.findAllByUser_UsernameAndTitleContaining(username,searchBlogIn.getSearchKey());
+        if (blogs.isEmpty()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+
+        List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<CommentOut>> comment(Long id, CommentIn commentIn) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Optional<User> user = userRepository.findByUsername(username);
+
+        Optional<Blog> blog = blogRepository.findById(id);
+        if (!blog.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+
+        return null;
     }
 
     private Set<Tag> getTagBlog(String tags) {

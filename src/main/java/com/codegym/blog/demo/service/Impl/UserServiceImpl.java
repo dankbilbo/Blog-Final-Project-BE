@@ -141,7 +141,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         User userEntitySaved = userRepository.save(MapEntityAndOut.mapUserUpdateInAndUserEntity(userUpdateIn, user.get()));
-
         UserOut userOut = MapEntityAndOut.mapUserEntityAndOut(userEntitySaved);
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.USER_UPDATED, userOut);
     }
@@ -153,19 +152,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
         }
 
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.get().getUsername());
 
-        if (!(correctUser
-                || isAdmin)) {
+        if (!(correctUser || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         userRepository.deleteById(id);
-
         return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.USER_DELETED);
     }
 
@@ -215,6 +211,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         userRepository.enabledUserByEmail(verificationToken.get().getUser().getEmail());
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.VERIFY_SUCCESS, verificationToken.get().getUser().getUsername());
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<String>> blockUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+        if (!isAdmin || user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN"))) {
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
+        }
+        user.get().setLocked(true);
+        userRepository.save(user.get());
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, StringResponse.BANNED + ' ' + user.get().getUsername());
     }
 
 

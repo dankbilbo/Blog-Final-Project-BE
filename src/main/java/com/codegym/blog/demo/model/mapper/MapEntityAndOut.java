@@ -1,14 +1,9 @@
 package com.codegym.blog.demo.model.mapper;
 
-import com.codegym.blog.demo.model.Entity.Blog;
-import com.codegym.blog.demo.model.Entity.Category;
-import com.codegym.blog.demo.model.Entity.Tag;
-import com.codegym.blog.demo.model.Entity.User;
-import com.codegym.blog.demo.model.in.BlogAddIn;
-import com.codegym.blog.demo.model.in.BlogUpdateIn;
-import com.codegym.blog.demo.model.in.UserPasswordIn;
-import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.Entity.*;
+import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
+import com.codegym.blog.demo.model.out.CommentOut;
 import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import lombok.AllArgsConstructor;
@@ -136,6 +131,10 @@ public class MapEntityAndOut {
         }
         return String.join(",", tagNameCollect);
     }
+
+    public static CommentOut mapCommentEntityAndOut(Comment comment){return  null;}
+    public static Comment mapCommentInAndEntity(CommentIn commentIn){return  null;}
+    public static List<CommentOut> mapListCommentEntityAndOut(List<Comment> comments){return  null;}
 
 
 }
