@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         if (!(correctUser
                 || isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         User userEntitySaved = userRepository.save(MapEntityAndOut.mapUserUpdateInAndUserEntity(userUpdateIn, user.get()));
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         if (!(correctUser
                 || isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         userRepository.deleteById(id);
@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         if (!(correctUser
                 || isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
         User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn, user.get());
         userRepository.save(userEntityIn);

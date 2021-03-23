@@ -60,10 +60,10 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.not_authorized(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
-        Blog blogToUpdate = MapEntityAndOut.mapBlogUpdateInAndEntity(blogUpdateIn,blog.get());
+        Blog blogToUpdate = MapEntityAndOut.mapBlogUpdateInAndEntity(blogUpdateIn, blog.get());
         Blog blogAfterUpdate = blogRepository.save(blogToUpdate);
 
         BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterUpdate);
@@ -110,11 +110,11 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin) && blog.get().isPrivacy() == false) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
-        if (!username.equals(user.getUsername())){
-             blog.get().setViews(blog.get().getViews() + 1);
+        if (!username.equals(user.getUsername())) {
+            blog.get().setViews(blog.get().getViews() + 1);
 
         }
         Blog blogAfterView = blogRepository.save(blog.get());
@@ -156,7 +156,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         blogRepository.deleteById(id);
@@ -185,8 +185,4 @@ public class ActionBlogServiceImpl implements BlogActionService {
         }
         return blogTags;
     }
-
-
-
-
 }
