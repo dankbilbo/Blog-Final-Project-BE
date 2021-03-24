@@ -187,6 +187,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
+        userPasswordIn.setPassword(passwordEncoder.encoder().encode(userPasswordIn.getPassword()));
         User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn, user.get());
         userRepository.save(userEntityIn);
 
