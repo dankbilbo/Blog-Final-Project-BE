@@ -1,5 +1,7 @@
 package com.codegym.blog.demo.controller;
 
+import com.codegym.blog.demo.model.Entity.Category;
+import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
 import com.codegym.blog.demo.model.out.BlogOut;
@@ -33,6 +35,11 @@ public class UserController {
     @Autowired
     private final BlogActionService blogService;
 
+    @GetMapping
+    public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {
+        return userService.getAllUser();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SystemResponse<UserOut>> getUser(@PathVariable Long id) {
         return userService.getUserById(id);
@@ -58,8 +65,13 @@ public class UserController {
         return blogService.getAllPersonalBlog();
     }
 
-    @GetMapping
-    public ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs() {
-        return null;
+    @PatchMapping("/{id}/block")
+    public ResponseEntity<SystemResponse<String>> blockUser(@PathVariable Long id) {
+        return userService.blockUser(id);
     }
+
+//    @GetMapping
+//    public ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs() {
+//        return null;
+//    }
 }

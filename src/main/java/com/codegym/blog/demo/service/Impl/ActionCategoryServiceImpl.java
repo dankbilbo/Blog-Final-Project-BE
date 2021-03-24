@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
     public ResponseEntity<SystemResponse<List<Category>>> categoryList() {
         List<Category> categories = categoryService.findAll();
         if (categories.isEmpty()) {
-            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
         }
         return Response.ok(ErrorCodeMessage.SUCCESS
                 , StringResponse.OK
@@ -35,12 +36,15 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
     @Override
     public ResponseEntity<SystemResponse<Category>> createCategory(Category category) {
         List<Category> categories = categoryService.findAll();
-        for (Category c : categories) {
-            if (c.equals(category)) {
-                return Response.bad_request(ErrorCodeMessage.BAD_REQUEST,StringResponse.CATEGORY_EXISTED);
+        if (!categories.isEmpty()) {
+            for (Category c : categories) {
+                if (c.getName().equals(category.getName())) {
+                    return Response.bad_request(ErrorCodeMessage.BAD_REQUEST, StringResponse.CATEGORY_EXISTED);
+                }
             }
-            categoryService.save(category);
         }
+        category.setCreatedAt(LocalDateTime.now());
+        categoryService.save(category);
         return Response.ok(ErrorCodeMessage.SUCCESS
                 , StringResponse.OK
                 , category);
@@ -54,7 +58,7 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
                     , StringResponse.OK
                     , category.get());
         }
-        return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+        return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
     }
 
     @Override
@@ -67,7 +71,7 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
                     , StringResponse.OK
                     , categoryCurrent);
         }
-        return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+        return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
     }
 
     @Override
@@ -79,6 +83,6 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
                     , StringResponse.OK
                     , category);
         }
-        return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+        return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
     }
 }

@@ -19,5 +19,7 @@ public class StringResponse {
     public static String USER_VERIFIED_ALREADY = "user verified already";
     public static String TOKEN_EXPIRED = "verification token expired";
     public static String VERIFY_SUCCESS = "user verify success";
+    public static String FORBIDDEN = "u are not allowed to view this resources";
+    public static String BANNED = "banned";
     public static String COMMENT_DELETED = "comment deleted";
 }

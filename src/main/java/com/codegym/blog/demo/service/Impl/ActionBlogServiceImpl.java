@@ -60,7 +60,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.not_authorized(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         Blog blogToUpdate = MapEntityAndOut.mapBlogUpdateInAndEntity(blogUpdateIn, blog.get());
@@ -104,14 +104,13 @@ public class ActionBlogServiceImpl implements BlogActionService {
         }
 
         User user = blog.get().getUser();
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin) && blog.get().isPrivacy() == false) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         if (!username.equals(user.getUsername())) {
@@ -157,7 +156,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean correctUser = username.equals(user.getUsername());
 
         if (!(correctUser && isAdmin)) {
-            return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
 
@@ -309,6 +308,5 @@ public class ActionBlogServiceImpl implements BlogActionService {
         }
         return blogTags;
     }
-
 
 }

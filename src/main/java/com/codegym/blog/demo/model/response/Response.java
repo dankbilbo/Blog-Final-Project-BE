@@ -46,4 +46,10 @@ public class Response{
                 .status(errorCodeResponse)
                 .body(new SystemResponse<>(errorCodeResponse,message));
     }
+
+    public static <T>  ResponseEntity<SystemResponse<T>> forbidden(int errorCodeResponse,String message) {
+        return ResponseEntity
+                .status(errorCodeResponse)
+                .body(new SystemResponse<>(errorCodeResponse,message));
+    }
 }

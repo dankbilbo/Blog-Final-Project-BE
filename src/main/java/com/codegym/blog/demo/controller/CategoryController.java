@@ -22,7 +22,7 @@ public class CategoryController {
         return categoryService.categoryList();
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<SystemResponse<Category>> createCategory(@RequestBody Category category) {
         return categoryService.createCategory(category);
     }
