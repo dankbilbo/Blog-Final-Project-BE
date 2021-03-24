@@ -39,7 +39,8 @@ public class MapEntityAndOut {
                 user.getEmail(),
                 user.getAvatarURL(),
                 user.getRole(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.isLocked()
         );
         return userOut;
     }

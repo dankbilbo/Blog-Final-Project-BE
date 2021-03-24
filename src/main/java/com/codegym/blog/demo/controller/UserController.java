@@ -66,8 +66,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/block")
-    public ResponseEntity<SystemResponse<String>> blockUser(@PathVariable Long id) {
-        return userService.blockUser(id);
+    public ResponseEntity<SystemResponse<String>> blockUser(@PathVariable Long id,@RequestBody UserOut userOut) {
+        return userService.blockUser(id, userOut);
     }
 
 //    @GetMapping

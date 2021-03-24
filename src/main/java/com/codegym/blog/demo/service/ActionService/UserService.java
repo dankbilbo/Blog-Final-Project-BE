@@ -26,5 +26,5 @@ public interface UserService {
 
     ResponseEntity<SystemResponse<String>> verify(String token);
 
-    ResponseEntity<SystemResponse<String>> blockUser(Long id);
+    ResponseEntity<SystemResponse<String>> blockUser(Long id, UserOut userOut);
 }
