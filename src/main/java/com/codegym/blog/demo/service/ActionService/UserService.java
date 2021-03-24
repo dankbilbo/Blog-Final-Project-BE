@@ -1,5 +1,6 @@
 package com.codegym.blog.demo.service.ActionService;
 
+import com.codegym.blog.demo.model.in.UserBanIn;
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserSignUp;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
@@ -26,5 +27,5 @@ public interface UserService {
 
     ResponseEntity<SystemResponse<String>> verify(String token);
 
-    ResponseEntity<SystemResponse<String>> blockUser(Long id);
+    ResponseEntity<SystemResponse<String>> blockUser(UserBanIn locked, Long id);
 }

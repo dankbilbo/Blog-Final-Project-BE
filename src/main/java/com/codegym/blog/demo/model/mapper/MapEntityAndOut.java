@@ -27,7 +27,8 @@ public class MapEntityAndOut {
                     user.getEmail(),
                     user.getAvatarURL(),
                     user.getRole(),
-                    user.getCreatedAt()
+                    user.getCreatedAt(),
+                    user.isLocked()
             );
             userOuts.add(userOut);
         }
@@ -39,7 +40,7 @@ public class MapEntityAndOut {
         return user;
     }
 
-    public static UserPasswordOut mapUserPasswordAndOut(User user){
+    public static UserPasswordOut mapUserPasswordAndOut(User user) {
         return new UserPasswordOut(user.getPassword());
     }
 
@@ -52,7 +53,8 @@ public class MapEntityAndOut {
                 user.getEmail(),
                 user.getAvatarURL(),
                 user.getRole(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.isLocked()
         );
         return userOut;
     }
@@ -132,9 +134,17 @@ public class MapEntityAndOut {
         return String.join(",", tagNameCollect);
     }
 
-    public static CommentOut mapCommentEntityAndOut(Comment comment){return  null;}
-    public static Comment mapCommentInAndEntity(CommentIn commentIn){return  null;}
-    public static List<CommentOut> mapListCommentEntityAndOut(List<Comment> comments){return  null;}
+    public static CommentOut mapCommentEntityAndOut(Comment comment) {
+        return null;
+    }
+
+    public static Comment mapCommentInAndEntity(CommentIn commentIn) {
+        return null;
+    }
+
+    public static List<CommentOut> mapListCommentEntityAndOut(List<Comment> comments) {
+        return null;
+    }
 
 
 }
