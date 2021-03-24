@@ -1,11 +1,15 @@
 package com.codegym.blog.demo.model.out;
 
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommentOut {
+    private Long id;
     private String content;
     private Long blogId;
     private Long userId;

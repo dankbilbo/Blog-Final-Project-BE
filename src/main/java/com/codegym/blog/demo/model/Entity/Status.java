@@ -23,16 +23,16 @@ public class Status {
 
     private LocalDateTime timeLiked;
 
-    private Emo emo;
+    private boolean isLiked;
 
     @ManyToOne
     private Blog blog;
 
-    public Status(LocalDateTime createdAt, User user, LocalDateTime timeLiked, Emo emo, Blog blog) {
+    public Status(LocalDateTime createdAt, User user, LocalDateTime timeLiked, boolean liked, Blog blog) {
         this.createdAt = createdAt;
         this.user = user;
         this.timeLiked = timeLiked;
-        this.emo = emo;
+        this.isLiked = liked;
         this.blog = blog;
     }
 }

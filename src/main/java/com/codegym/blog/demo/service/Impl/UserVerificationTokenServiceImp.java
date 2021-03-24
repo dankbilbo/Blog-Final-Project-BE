@@ -16,7 +16,7 @@ import java.util.Optional;
 public class UserVerificationTokenServiceImp implements UserVerificationTokenService {
 
     @Autowired
-    private final UserVerificationTokenRepository verificationTokenRepository;
+    private UserVerificationTokenRepository verificationTokenRepository;
 
 
     @Override
