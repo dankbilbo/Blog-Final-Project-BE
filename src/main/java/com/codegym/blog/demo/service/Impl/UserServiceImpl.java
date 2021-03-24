@@ -13,6 +13,7 @@ import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
+import com.codegym.blog.demo.repository.BlogRepository;
 import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.repository.UserRepository;
 import com.codegym.blog.demo.repository.UserVerificationTokenRepository;
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private final EmailService emailService;
+
+    @Autowired
+    private final BlogRepository blogRepository;
 
     @Override
     public ResponseEntity<SystemResponse<String>> signUp(UserSignUp userSignUp) {
@@ -153,6 +157,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED, StringResponse.NOT_AUTHORIZED);
         }
 
+        blogRepository.updateBlogAfterDeleteUser(user.get().getId());
         userRepository.deleteById(id);
 
         return Response.no_content(ErrorCodeMessage.NO_CONTENT,StringResponse.USER_DELETED);

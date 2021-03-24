@@ -30,4 +30,9 @@ public class LoginController {
 
         return jwtService.login(userLogin);
     }
+//
+//    @PostMapping("/login-facebook")
+//    public ResponseEntity<?> loginWithFacebook(HttpRequest httpRequest) throws ClientProtocolException, IOException{
+//
+//    }
 }

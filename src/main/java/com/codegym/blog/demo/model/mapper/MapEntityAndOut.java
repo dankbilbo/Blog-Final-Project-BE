@@ -19,17 +19,7 @@ public class MapEntityAndOut {
     public static List<UserOut> mapListUserEntityAndOut(List<User> users) {
         List<UserOut> userOuts = new ArrayList<>();
         for (User user : users) {
-            UserOut userOut = new UserOut(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.getAvatarURL(),
-                    user.getRole(),
-                    user.getCreatedAt()
-            );
-            userOuts.add(userOut);
+            userOuts.add(mapUserEntityAndOut(user));
         }
         return userOuts;
     }
@@ -39,7 +29,7 @@ public class MapEntityAndOut {
         return user;
     }
 
-    public static UserPasswordOut mapUserPasswordAndOut(User user){
+    public static UserPasswordOut mapUserPasswordAndOut(User user) {
         return new UserPasswordOut(user.getPassword());
     }
 
@@ -68,19 +58,7 @@ public class MapEntityAndOut {
     public static List<BlogOut> mapListBlogEntityAndOut(List<Blog> blogs) {
         List<BlogOut> blogOuts = new ArrayList<>();
         for (Blog blog : blogs) {
-            BlogOut blogOut = new BlogOut();
-            blogOut.setId(blog.getId());
-            blogOut.setTitle(blog.getTitle());
-            blogOut.setContent(blog.getContent());
-            blogOut.setShortDescription(blog.getShortDescription());
-            blogOut.setPreviewImageURl(blog.getPreviewImageURL());
-            blogOut.setCreatedAt(blog.getCreatedAt());
-            blogOut.setUserId(blog.getUser().getId());
-            blogOut.setPrivacy(blog.isPrivacy());
-            blogOut.setTags(setTagsToString(blog.getTags()));
-            blogOut.setViews(blog.getViews());
-            blogOut.setCategoryId(blog.getCategory().getId());
-            blogOuts.add(blogOut);
+            blogOuts.add(mapBlogEntityAndOut(blog));
         }
         return blogOuts;
     }
@@ -132,9 +110,49 @@ public class MapEntityAndOut {
         return String.join(",", tagNameCollect);
     }
 
-    public static CommentOut mapCommentEntityAndOut(Comment comment){return  null;}
-    public static Comment mapCommentInAndEntity(CommentIn commentIn){return  null;}
-    public static List<CommentOut> mapListCommentEntityAndOut(List<Comment> comments){return  null;}
+    public static CommentOut mapCommentEntityAndOut(Comment comment) {
+        if (comment.getRepliedTo() == null) {
+            return new CommentOut(
+                    comment.getId(),
+                    comment.getContent(),
+                    comment.getBlog().getId(),
+                    comment.getUser().getId(),
+                    null,
+                    comment.getCreatedAt()
+            );
+        }
+        return new CommentOut(
+                comment.getId(),
+                comment.getContent(),
+                comment.getBlog().getId(),
+                comment.getUser().getId(),
+                comment.getRepliedTo().getId(),
+                comment.getCreatedAt()
+        );
+    }
+
+    public static Comment mapCommentInAndEntity(CommentIn commentIn, Blog blog, User user, Comment comment) {
+        return new Comment(
+                commentIn.getContent(),
+                LocalDateTime.now(),
+                user,
+                comment,
+                blog
+        );
+    }
+
+    public static Comment mapCommentUpdateInAndEntity(CommentUpdateIn commentUpdateIn,Comment comment){
+         comment.setContent(commentUpdateIn.getContent());
+         return comment;
+    }
+
+    public static List<CommentOut> mapListCommentEntityAndOut(List<Comment> comments) {
+        List<CommentOut> commentOuts = new ArrayList<>();
+        for (Comment comment : comments){
+            commentOuts.add(mapCommentEntityAndOut(comment));
+        }
+        return commentOuts;
+    }
 
 
 }

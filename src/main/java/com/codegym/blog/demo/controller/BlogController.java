@@ -1,9 +1,6 @@
 package com.codegym.blog.demo.controller;
 
-import com.codegym.blog.demo.model.in.BlogAddIn;
-import com.codegym.blog.demo.model.in.BlogUpdateIn;
-import com.codegym.blog.demo.model.in.CommentIn;
-import com.codegym.blog.demo.model.in.SearchBlogIn;
+import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.CommentOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
@@ -58,5 +55,23 @@ public class BlogController {
         return blogService.comment(id,commentIn);
     }
 
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<SystemResponse<List<CommentOut>>> getAllBlogComments(@PathVariable Long id){
+        return blogService.getAllBlogComment(id);
+    }
+
+    @DeleteMapping("/{blogId}/comments/{commentId}")
+    public ResponseEntity<SystemResponse<String>> deleteComment(
+            @PathVariable(name = "blogId") Long blogId,
+            @PathVariable(name = "commentId") Long commentId){
+        return blogService.deleteComment(blogId,commentId);
+    }
+
+    @PatchMapping("/{blogId}/comments/{commentId}")
+    public ResponseEntity<SystemResponse<CommentOut>> updateComment(
+            @PathVariable(name = "blogId") Long blogId,
+            @PathVariable(name = "commentId") Long commentId, @RequestBody CommentUpdateIn commentUpdateIn){
+        return blogService.updateComment(blogId,commentId,commentUpdateIn);
+    }
 
 }

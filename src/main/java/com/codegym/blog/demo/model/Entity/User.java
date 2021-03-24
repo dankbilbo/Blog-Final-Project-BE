@@ -57,5 +57,7 @@ public class User  {
         this.role = roles;
     }
 
-
+    public User(String username) {
+        this.username = username;
+    }
 }

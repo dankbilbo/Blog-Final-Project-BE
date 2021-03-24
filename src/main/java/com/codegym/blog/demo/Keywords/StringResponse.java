@@ -19,4 +19,5 @@ public class StringResponse {
     public static String USER_VERIFIED_ALREADY = "user verified already";
     public static String TOKEN_EXPIRED = "verification token expired";
     public static String VERIFY_SUCCESS = "user verify success";
+    public static String COMMENT_DELETED = "comment deleted";
 }

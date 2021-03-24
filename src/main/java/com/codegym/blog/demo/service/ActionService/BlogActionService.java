@@ -1,9 +1,6 @@
 package com.codegym.blog.demo.service.ActionService;
 
-import com.codegym.blog.demo.model.in.BlogAddIn;
-import com.codegym.blog.demo.model.in.BlogUpdateIn;
-import com.codegym.blog.demo.model.in.CommentIn;
-import com.codegym.blog.demo.model.in.SearchBlogIn;
+import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.CommentOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
@@ -21,4 +18,9 @@ public interface BlogActionService {
     ResponseEntity<SystemResponse<List<BlogOut>>> findByTitleOrShortDescription(SearchBlogIn searchBlogIn);
     ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs(SearchBlogIn searchBlogIn);
     ResponseEntity<SystemResponse<CommentOut>> comment(Long id, CommentIn commentIn);
+    ResponseEntity<SystemResponse<List<CommentOut>>> getAllBlogComment(Long id);
+
+    ResponseEntity<SystemResponse<String>> deleteComment(Long blogId, Long commentId);
+
+    ResponseEntity<SystemResponse<CommentOut>> updateComment(Long blogId, Long commentId, CommentUpdateIn commentUpdateIn);
 }
