@@ -2,15 +2,11 @@ package com.codegym.blog.demo.model.out;
 
 import com.codegym.blog.demo.model.Entity.UserRole;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-@Getter
-@Setter
 public class UserOut {
     private Long id;
     private String username;
@@ -32,5 +28,8 @@ public class UserOut {
         this.role = role;
         this.createdAt = createdAt;
         this.locked = locked;
+    }
+
+    public UserOut(Long id, String username, String firstName, String lastName, String email, String avatarURL, Set<UserRole> role, LocalDateTime createdAt) {
     }
 }

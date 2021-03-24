@@ -6,6 +6,7 @@ import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.Entity.UserPrincipal;
 import com.codegym.blog.demo.model.Entity.UserRole;
 import com.codegym.blog.demo.model.Entity.UserVerificationToken;
+import com.codegym.blog.demo.model.in.UserBanIn;
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserSignUp;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
@@ -220,7 +221,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<SystemResponse<String>> blockUser(Long id, UserOut userOut) {
+    public ResponseEntity<SystemResponse<String>> blockUser(UserBanIn userBanIn, Long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
@@ -231,7 +232,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!isAdmin || user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN"))) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
-        user.get().setLocked(userOut.isLocked());
+
+        user.get().setLocked(userBanIn.isLocked());
         userRepository.save(user.get());
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, StringResponse.BANNED + ' ' + user.get().getUsername());
     }

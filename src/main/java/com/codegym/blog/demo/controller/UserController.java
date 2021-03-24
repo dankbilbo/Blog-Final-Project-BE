@@ -2,6 +2,7 @@ package com.codegym.blog.demo.controller;
 
 import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.User;
+import com.codegym.blog.demo.model.in.UserBanIn;
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
 import com.codegym.blog.demo.model.out.BlogOut;
@@ -66,8 +67,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/block")
-    public ResponseEntity<SystemResponse<String>> blockUser(@PathVariable Long id,@RequestBody UserOut userOut) {
-        return userService.blockUser(id, userOut);
+    public ResponseEntity<SystemResponse<String>> blockUser(@RequestBody UserBanIn userBanIn, @PathVariable Long id) {
+        return userService.blockUser(userBanIn, id);
     }
 
 //    @GetMapping
