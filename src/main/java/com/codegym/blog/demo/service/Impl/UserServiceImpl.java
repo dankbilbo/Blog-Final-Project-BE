@@ -14,6 +14,7 @@ import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
+import com.codegym.blog.demo.repository.BlogRepository;
 import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.repository.UserRepository;
 import com.codegym.blog.demo.repository.UserVerificationTokenRepository;
@@ -38,19 +39,22 @@ import java.util.*;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private final RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    private final UserVerificationTokenRepository userVerificationTokenRepository;
+    private UserVerificationTokenRepository userVerificationTokenRepository;
 
     @Autowired
-    private final EmailService emailService;
+    private EmailService emailService;
+
+    @Autowired
+    private BlogRepository blogRepository;
 
     @Override
     public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {
@@ -162,6 +166,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
+        blogRepository.updateBlogAfterDeleteUser(user.get().getId());
         userRepository.deleteById(id);
         return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.USER_DELETED);
     }
@@ -182,6 +187,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
+        userPasswordIn.setPassword(passwordEncoder.encoder().encode(userPasswordIn.getPassword()));
         User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn, user.get());
         userRepository.save(userEntityIn);
 

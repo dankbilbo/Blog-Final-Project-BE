@@ -26,7 +26,7 @@ public class MapEntityAndOut {
         return user;
     }
 
-    public static UserPasswordOut mapUserPasswordAndOut(User user){
+    public static UserPasswordOut mapUserPasswordAndOut(User user) {
         return new UserPasswordOut(user.getPassword());
     }
 
