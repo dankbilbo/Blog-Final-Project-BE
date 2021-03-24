@@ -14,7 +14,6 @@ import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
-import com.codegym.blog.demo.repository.BlogRepository;
 import com.codegym.blog.demo.repository.RoleRepository;
 import com.codegym.blog.demo.repository.UserRepository;
 import com.codegym.blog.demo.repository.UserVerificationTokenRepository;
@@ -39,22 +38,19 @@ import java.util.*;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    private UserVerificationTokenRepository userVerificationTokenRepository;
+    private final UserVerificationTokenRepository userVerificationTokenRepository;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private BlogRepository blogRepository;
+    private final EmailService emailService;
 
     @Override
     public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {
@@ -166,7 +162,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
-        blogRepository.updateBlogAfterDeleteUser(user.get().getId());
         userRepository.deleteById(id);
         return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.USER_DELETED);
     }
@@ -187,7 +182,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
-        userPasswordIn.setPassword(passwordEncoder.encoder().encode(userPasswordIn.getPassword()));
         User userEntityIn = MapEntityAndOut.mapUserPasswordInAndEntity(userPasswordIn, user.get());
         userRepository.save(userEntityIn);
 
@@ -232,11 +226,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
-        user.get().setLocked(userBanIn.isLocked());
+        user.get().setLocked(true);
         userRepository.save(user.get());
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, StringResponse.BANNED + ' ' + user.get().getUsername());
     }
-
 
     private void sendVerificationEmail(String token, String email) {
         String linkVerify = "http://localhost:8080/register/" + token;

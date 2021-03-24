@@ -29,4 +29,7 @@ public class UserOut {
         this.createdAt = createdAt;
         this.locked = locked;
     }
+
+    public UserOut(Long id, String username, String firstName, String lastName, String email, String avatarURL, Set<UserRole> role, LocalDateTime createdAt) {
+    }
 }
