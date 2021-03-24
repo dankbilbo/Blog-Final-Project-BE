@@ -1,8 +1,10 @@
 package com.codegym.blog.demo.controller;
 
+import com.codegym.blog.demo.model.Entity.Status;
 import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.CommentOut;
+import com.codegym.blog.demo.model.out.StatusOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
 import lombok.AllArgsConstructor;
@@ -72,6 +74,21 @@ public class BlogController {
             @PathVariable(name = "blogId") Long blogId,
             @PathVariable(name = "commentId") Long commentId, @RequestBody CommentUpdateIn commentUpdateIn){
         return blogService.updateComment(blogId,commentId,commentUpdateIn);
+    }
+
+    @GetMapping("/toplikes")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Views() {
+        return blogService.getTopFiveViewsBlogs();
+    }
+
+    @PostMapping("/{id}/likes")
+    public ResponseEntity<SystemResponse<String>> likeBlog(@RequestBody StatusIn statusIn,@PathVariable Long id){
+        return blogService.likeBlog(statusIn,id);
+    }
+
+    @GetMapping("/{id}/likes")
+    public ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(@PathVariable Long id){
+        return blogService.getAllLikesBlog(id);
     }
 
 }

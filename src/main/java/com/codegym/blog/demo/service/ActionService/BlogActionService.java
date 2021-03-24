@@ -1,8 +1,10 @@
 package com.codegym.blog.demo.service.ActionService;
 
+import com.codegym.blog.demo.model.Entity.Status;
 import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.CommentOut;
+import com.codegym.blog.demo.model.out.StatusOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -23,4 +25,10 @@ public interface BlogActionService {
     ResponseEntity<SystemResponse<String>> deleteComment(Long blogId, Long commentId);
 
     ResponseEntity<SystemResponse<CommentOut>> updateComment(Long blogId, Long commentId, CommentUpdateIn commentUpdateIn);
+
+    ResponseEntity<SystemResponse<List<BlogOut>>> getTopFiveViewsBlogs();
+
+    ResponseEntity<SystemResponse<String>> likeBlog(StatusIn status, Long id);
+
+    ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(Long id);
 }

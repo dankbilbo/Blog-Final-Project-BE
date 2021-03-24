@@ -23,7 +23,12 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> search(String searchKey);
 
     @Query(nativeQuery = true,
-            value ="UPDATE * FROM blog SET user_id = 1 WHERE user_id = ?1")
+            value = "UPDATE * FROM blog SET user_id = 1 WHERE user_id = ?1")
     @Modifying
     List<Blog> updateBlogAfterDeleteUser(Long userId);
+
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM blog ORDER BY views limit 5 WHERE privacy = TRUE")
+    List<Blog> find5MostViewsPublicBlogs();
+
 }

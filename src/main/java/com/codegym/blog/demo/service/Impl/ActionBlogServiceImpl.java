@@ -6,12 +6,10 @@ import com.codegym.blog.demo.model.Entity.*;
 import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.CommentOut;
+import com.codegym.blog.demo.model.out.StatusOut;
 import com.codegym.blog.demo.model.response.Response;
 import com.codegym.blog.demo.model.response.SystemResponse;
-import com.codegym.blog.demo.repository.BlogRepository;
-import com.codegym.blog.demo.repository.CategoryRepository;
-import com.codegym.blog.demo.repository.CommentRepository;
-import com.codegym.blog.demo.repository.UserRepository;
+import com.codegym.blog.demo.repository.*;
 import com.codegym.blog.demo.service.ActionService.BlogActionService;
 import com.codegym.blog.demo.service.Interface.TagService;
 import com.codegym.blog.demo.model.mapper.MapEntityAndOut;
@@ -43,6 +41,9 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
     @Autowired
     private final CommentRepository commentRepository;
+
+    @Autowired
+    private final StatusRepository statusRepository;
 
 
     @Override
@@ -283,6 +284,68 @@ public class ActionBlogServiceImpl implements BlogActionService {
         CommentOut commentOut = MapEntityAndOut.mapCommentEntityAndOut(commentEntity);
 
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, commentOut);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getTopFiveViewsBlogs() {
+        List<Blog> blogs = blogRepository.find5MostViewsPublicBlogs();
+        if (blogs.isEmpty()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+        List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<String>> likeBlog(StatusIn statusIn, Long id) {
+        Optional<Blog> blog = blogRepository.findById(id);
+        if (!blog.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+
+        boolean isBlogPrivate = !blog.get().isPrivacy();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (isBlogPrivate && !user.equals(blog.get().getUser())){
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN,StringResponse.FORBIDDEN);
+        }
+        Optional<Status> statusToCheck = statusRepository.findAllByUser_IdAndBlog_Id(user.get().getId(),blog.get().getId());
+        if (statusToCheck.isPresent()){
+            statusToCheck.get().setLiked(!statusToCheck.get().isLiked());
+            statusRepository.save(statusToCheck.get());
+        }else {
+            Status status = new Status(LocalDateTime.now(),user.get(),LocalDateTime.now(),true,blog.get());
+            statusRepository.save(status);
+        }
+
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,StringResponse.OK);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(Long id) {
+        Optional<Blog> blog = blogRepository.findById(id);
+        if (!blog.isPresent()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+        boolean isBlogPrivate = !blog.get().isPrivacy();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (isBlogPrivate && !user.equals(blog.get().getUser())){
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN,StringResponse.FORBIDDEN);
+        }
+
+        List<Status> statuses = statusRepository.findAllByBlog_Id(id);
+        if (statuses.isEmpty()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
+        }
+        List<StatusOut> statusOuts = MapEntityAndOut.mapListStatusEntityAndOUt(statuses);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,statusOuts);
+
     }
 
     private void deleteCommentInDb(Comment comment) {

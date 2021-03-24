@@ -2,10 +2,7 @@ package com.codegym.blog.demo.model.mapper;
 
 import com.codegym.blog.demo.model.Entity.*;
 import com.codegym.blog.demo.model.in.*;
-import com.codegym.blog.demo.model.out.BlogOut;
-import com.codegym.blog.demo.model.out.CommentOut;
-import com.codegym.blog.demo.model.out.UserOut;
-import com.codegym.blog.demo.model.out.UserPasswordOut;
+import com.codegym.blog.demo.model.out.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -152,6 +149,20 @@ public class MapEntityAndOut {
             commentOuts.add(mapCommentEntityAndOut(comment));
         }
         return commentOuts;
+    }
+
+    public static List<StatusOut> mapListStatusEntityAndOUt(List<Status> statuses){
+        List<StatusOut> statusOuts = new ArrayList<>();
+        for (Status status : statuses){
+            StatusOut statusOut = new StatusOut(
+                    status.getId(),
+                    status.isLiked(),
+                    status.getUser().getId(),
+                    status.getBlog().getId()
+            );
+            statusOuts.add(statusOut);
+        }
+        return statusOuts;
     }
 
 
