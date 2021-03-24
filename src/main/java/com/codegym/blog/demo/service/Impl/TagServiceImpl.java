@@ -14,7 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TagServiceImpl implements TagService {
     @Autowired
-    private final TagRepository tagRepository;
+    private TagRepository tagRepository;
 
     @Override
     public List<Tag> findAll() {

@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BlogController {
     @Autowired
-    private final BlogActionService blogService;
+    private BlogActionService blogService;
 
     @GetMapping
     public ResponseEntity<SystemResponse<List<BlogOut>>> getAllPublicBlogs() {

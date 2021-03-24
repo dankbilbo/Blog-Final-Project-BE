@@ -38,22 +38,22 @@ import java.util.*;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private final RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    private final UserVerificationTokenRepository userVerificationTokenRepository;
+    private UserVerificationTokenRepository userVerificationTokenRepository;
 
     @Autowired
-    private final EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    private final BlogRepository blogRepository;
+    private BlogRepository blogRepository;
 
     @Override
     public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {

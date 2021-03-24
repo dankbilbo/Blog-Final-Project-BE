@@ -28,22 +28,22 @@ import java.util.*;
 public class ActionBlogServiceImpl implements BlogActionService {
 
     @Autowired
-    private final BlogRepository blogRepository;
+    private BlogRepository blogRepository;
 
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private final CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    private final TagService tagService;
+    private TagService tagService;
 
     @Autowired
-    private final CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private final StatusRepository statusRepository;
+    private StatusRepository statusRepository;
 
 
     @Override

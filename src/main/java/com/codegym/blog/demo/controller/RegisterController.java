@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class RegisterController {
 
     @Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<SystemResponse<String>> register(@RequestBody UserSignUp userSignUp){

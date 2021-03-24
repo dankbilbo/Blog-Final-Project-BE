@@ -30,10 +30,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController {
     @Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @Autowired
-    private final BlogActionService blogService;
+    private BlogActionService blogService;
 
     @GetMapping
     public ResponseEntity<SystemResponse<List<UserOut>>> getAllUser() {
