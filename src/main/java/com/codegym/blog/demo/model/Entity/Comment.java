@@ -21,17 +21,13 @@ public class Comment{
     @ManyToOne
     private User user;
 
-    @OneToOne
-    private Comment repliedTo;
-
     @ManyToOne
     private Blog blog;
 
-    public Comment(String content, LocalDateTime createdAt, User user, Comment repliedTo, Blog blog) {
+    public Comment(String content, LocalDateTime createdAt, User user, Blog blog) {
         this.content = content;
         this.createdAt = createdAt;
         this.user = user;
-        this.repliedTo = repliedTo;
         this.blog = blog;
     }
 }

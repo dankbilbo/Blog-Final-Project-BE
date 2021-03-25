@@ -35,4 +35,14 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteById(Long id) {
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public List<Category> getTopFives() {
+        return categoryRepository.find5MostBlogsCategory();
+    }
+
+    @Override
+    public Long countNumberBlogsByCategory(Long id) {
+        return categoryRepository.countBlogsByCategoryId(id);
+    }
 }

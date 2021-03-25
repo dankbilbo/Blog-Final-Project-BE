@@ -35,4 +35,6 @@ public interface BlogActionService {
     ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes();
 
     ResponseEntity<SystemResponse<List<BlogOut>>> findALl();
+
+    ResponseEntity<SystemResponse<List<BlogOut>>> findByTags(SearchBlogIn searchBlogIn);
 }

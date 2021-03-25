@@ -5,6 +5,7 @@ import com.codegym.blog.demo.model.response.SystemResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CategoryActionService {
 
@@ -17,4 +18,6 @@ public interface CategoryActionService {
     ResponseEntity<SystemResponse<Category>> updateById(Long id, Category category);
 
     ResponseEntity<SystemResponse<Category>> deleteById(Long id);
+
+    ResponseEntity<SystemResponse<List<Category>>> getTopFives();
 }

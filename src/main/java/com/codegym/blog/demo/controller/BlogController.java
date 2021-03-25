@@ -101,4 +101,9 @@ public class BlogController {
         return blogService.findALl();
     }
 
+    @GetMapping("123123123")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> searchByTags(@RequestBody SearchBlogIn searchBlogIn){
+        return blogService.findByTags(searchBlogIn);
+    }
+
 }

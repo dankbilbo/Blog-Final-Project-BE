@@ -121,7 +121,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
             Blog blogAfterView = blogRepository.save(blog.get());
             BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
             return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
-        }else {
+        } else {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
     }
@@ -165,9 +165,12 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
         List<Comment> comments = commentRepository.findAllByBlog_Id(blog.get().getId());
         if (!comments.isEmpty()) {
-            for (Comment comment : comments) {
-                deleteCommentInDb(comment);
-            }
+            commentRepository.deleteAll(comments);
+        }
+
+        List<Status> statuses = statusRepository.findAllByBlog_Id(blog.get().getId());
+        if (!statuses.isEmpty()) {
+            statusRepository.deleteAll(statuses);
         }
 
         blogRepository.deleteById(id);
@@ -218,17 +221,8 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean isAdmin = user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN"));
 
         if (isBlogPublic || isUserWhoWroteBlog || isAdmin) {
-            Comment repliedTo = null;
-            if (commentIn.getCommentId() != null) {
-                boolean repliedToIsPresent = commentRepository.findById(commentIn.getCommentId()).isPresent();
-                if (!repliedToIsPresent) {
-                    return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
-                }
 
-                repliedTo = commentRepository.findById(commentIn.getCommentId()).get();
-            }
-
-            Comment commentEntity = commentRepository.save(MapEntityAndOut.mapCommentInAndEntity(commentIn, blog.get(), user.get(), repliedTo));
+            Comment commentEntity = commentRepository.save(MapEntityAndOut.mapCommentInAndEntity(commentIn, blog.get(), user.get()));
 
             CommentOut commentOut = MapEntityAndOut.mapCommentEntityAndOut(commentEntity);
             return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, commentOut);
@@ -261,13 +255,25 @@ public class ActionBlogServiceImpl implements BlogActionService {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         Optional<Comment> comment = commentRepository.findById(commentId);
-        if (!commentRepository.findById(commentId).isPresent()) {
+        if (!comment.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByUsername(username);
 
-        deleteCommentInDb(comment.get());
+        if (user.isPresent()) {
+            if (username.equals(comment.get().getUser().getUsername()) || user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN")))
+            {
+                commentRepository.deleteById(commentId);
 
-        return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.COMMENT_DELETED);
+                return Response.no_content(ErrorCodeMessage.NO_CONTENT, StringResponse.OK);
+            }
+        }
+
+        return Response.not_authorized(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
+
+
     }
 
     @Override
@@ -277,15 +283,25 @@ public class ActionBlogServiceImpl implements BlogActionService {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         Optional<Comment> comment = commentRepository.findById(commentId);
-        if (!commentRepository.findById(commentId).isPresent()) {
+        if (!comment.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
         }
 
-        Comment commentEntity = MapEntityAndOut.mapCommentUpdateInAndEntity(commentUpdateIn, comment.get());
-        commentEntity = commentRepository.save(commentEntity);
-        CommentOut commentOut = MapEntityAndOut.mapCommentEntityAndOut(commentEntity);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            if (username.equals(comment.get().getUser().getUsername()) || user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN")))
+            {
+                Comment commentEntity = MapEntityAndOut.mapCommentUpdateInAndEntity(commentUpdateIn, comment.get());
+                commentEntity = commentRepository.save(commentEntity);
+                CommentOut commentOut = MapEntityAndOut.mapCommentEntityAndOut(commentEntity);
 
-        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, commentOut);
+                return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, commentOut);
+            }
+        }
+
+        return Response.not_authorized(ErrorCodeMessage.NOT_AUTHORIZED,StringResponse.NOT_AUTHORIZED);
     }
 
     @Override
@@ -392,15 +408,12 @@ public class ActionBlogServiceImpl implements BlogActionService {
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, MapEntityAndOut.mapListBlogEntityAndOut(blogRepository.findAllByPrivacyIsTrue()));
     }
 
-    private void deleteCommentInDb(Comment comment) {
-        List<Comment> replies = commentRepository.findAllByRepliedTo_Id(comment.getId());
-        boolean doesntHasReply = commentRepository.findAllByRepliedTo_Id(comment.getId()).isEmpty();
-        if (!doesntHasReply) {
-            for (Comment reply : replies) {
-                deleteCommentInDb(reply);
-            }
-        }
-        commentRepository.delete(comment);
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> findByTags(SearchBlogIn searchBlogIn) {
+//        Set<Tag> tags = getTagBlog(searchBlogIn.getSearchKey());
+//        List<Blog> blogs = blogRepository.findAllByPrivacyIsTrue();
+//        blogs.stream().
+        return null;
     }
 
     private Set<Tag> getTagBlog(String tags) {

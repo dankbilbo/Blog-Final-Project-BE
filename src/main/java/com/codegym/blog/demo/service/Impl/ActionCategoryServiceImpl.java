@@ -12,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 
@@ -84,5 +83,14 @@ public class ActionCategoryServiceImpl implements CategoryActionService {
                     , category);
         }
         return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<List<Category>>> getTopFives() {
+        List<Category> categories = categoryService.getTopFives();
+        if (categories.isEmpty()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND,StringResponse.NOT_FOUND);
+        }
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,categories);
     }
 }

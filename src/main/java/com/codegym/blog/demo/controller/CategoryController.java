@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -40,5 +41,10 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<SystemResponse<Category>> deleteById(@PathVariable("id") Long id) {
         return categoryService.deleteById(id);
+    }
+
+    @GetMapping("/topfives")
+    public ResponseEntity<SystemResponse<List<Category>>> get5TopCategory(){
+        return categoryService.getTopFives();
     }
 }

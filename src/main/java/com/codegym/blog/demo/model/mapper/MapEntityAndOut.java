@@ -110,32 +110,20 @@ public class MapEntityAndOut {
     }
 
     public static CommentOut mapCommentEntityAndOut(Comment comment) {
-        if (comment.getRepliedTo() == null) {
-            return new CommentOut(
-                    comment.getId(),
-                    comment.getContent(),
-                    comment.getBlog().getId(),
-                    comment.getUser().getId(),
-                    null,
-                    comment.getCreatedAt()
-            );
-        }
         return new CommentOut(
                 comment.getId(),
                 comment.getContent(),
                 comment.getBlog().getId(),
                 comment.getUser().getId(),
-                comment.getRepliedTo().getId(),
                 comment.getCreatedAt()
         );
     }
 
-    public static Comment mapCommentInAndEntity(CommentIn commentIn, Blog blog, User user, Comment comment) {
+    public static Comment mapCommentInAndEntity(CommentIn commentIn, Blog blog, User user) {
         return new Comment(
                 commentIn.getContent(),
                 LocalDateTime.now(),
                 user,
-                comment,
                 blog
         );
     }
