@@ -39,4 +39,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             " order by count(status.is_liked) desc")
     List<Blog> find5MostLikesPublicBlog();
 
+    List<Blog> findAllByUser_UsernameAndPrivacyIsFalse(String username);
+
 }
