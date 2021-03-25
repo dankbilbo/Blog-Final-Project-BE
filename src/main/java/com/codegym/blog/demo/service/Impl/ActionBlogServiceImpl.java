@@ -112,18 +112,18 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.getUsername());
 
-        if (!(correctUser && isAdmin) && blog.get().isPrivacy() == false) {
+        if (blog.get().isPrivacy() == true || (correctUser || isAdmin)) {
+            if (!username.equals(user.getUsername())) {
+                blog.get().setViews(blog.get().getViews() + 1);
+
+            }
+
+            Blog blogAfterView = blogRepository.save(blog.get());
+            BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
+            return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
+        }else {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
-
-        if (!username.equals(user.getUsername())) {
-            blog.get().setViews(blog.get().getViews() + 1);
-
-        }
-        Blog blogAfterView = blogRepository.save(blog.get());
-
-        BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
-        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.getUsername());
 
-        if (!(correctUser && isAdmin)) {
+        if (!(correctUser || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 

@@ -98,7 +98,7 @@ public class BlogController {
 
     @GetMapping("/all")
     public ResponseEntity<SystemResponse<List<BlogOut>>> getAll(){
-g        return blogService.findALl();
+        return blogService.findALl();
     }
 
 }
