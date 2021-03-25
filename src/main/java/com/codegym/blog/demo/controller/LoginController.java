@@ -40,7 +40,7 @@ public class LoginController {
     }
 
     @PostMapping("/reclaim/{token}")
-    public ResponseEntity<SystemResponse<String>> changePasswordAfterIdentify(@PathVariable String token, UserPasswordIn userPasswordIn){
+    public ResponseEntity<SystemResponse<String>> changePasswordAfterIdentify(@PathVariable String token,@RequestBody UserPasswordIn userPasswordIn){
         return userService.changePasswordAfterIdentify(token,userPasswordIn);
     }
 }
