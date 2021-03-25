@@ -350,7 +350,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
     @Override
     public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes() {
-        List<Blog> blogs = blogRepository.find5MostViewsPublicBlogs();
+        List<Blog> blogs = blogRepository.find5MostLikesPublicBlog();
         if (blogs.isEmpty()){
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }

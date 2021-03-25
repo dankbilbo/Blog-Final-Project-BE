@@ -31,5 +31,12 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             value = "SELECT * FROM blog ORDER BY views limit 5 WHERE privacy = TRUE")
     List<Blog> find5MostViewsPublicBlogs();
 
+    @Query(nativeQuery = true,value = "select blog.id, blog.category_id,blog.content,blog.created_at,blog.preview_imageurl,blog.short_description,blog.user_id,blog.privacy,blog.title,blog.views" +
+            " from blog " +
+            " join status on blog.id = status.blog_id" +
+            " where blog.privacy = true" +
+            " group by blog.id" +
+            " order by count(status.is_liked) desc")
+    List<Blog> find5MostLikesPublicBlog();
 
 }
