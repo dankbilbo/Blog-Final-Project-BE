@@ -3,6 +3,7 @@ package com.codegym.blog.demo.controller;
 import com.codegym.blog.demo.model.Entity.Category;
 import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.in.UserBanIn;
+import com.codegym.blog.demo.model.in.UserEmailIn;
 import com.codegym.blog.demo.model.in.UserPasswordIn;
 import com.codegym.blog.demo.model.in.UserUpdateIn;
 import com.codegym.blog.demo.model.out.BlogOut;
@@ -71,8 +72,4 @@ public class UserController {
         return userService.blockUser(userBanIn, id);
     }
 
-//    @GetMapping
-//    public ResponseEntity<SystemResponse<List<BlogOut>>> findSpecificPersonalBlogs() {
-//        return null;
-//    }
 }

@@ -22,4 +22,6 @@ public interface UserVerificationTokenRepository extends JpaRepository<UserVerif
                     "WHERE token = ?2")
     @Modifying
     void verifyToken(LocalDateTime verifyTime,String token);
+
+    Optional<UserVerificationToken> findByUser_EmailAndVerifiedAtIsNotNull(String email);
 }

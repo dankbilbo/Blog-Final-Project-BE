@@ -1,9 +1,7 @@
 package com.codegym.blog.demo.service.ActionService;
 
-import com.codegym.blog.demo.model.in.UserBanIn;
-import com.codegym.blog.demo.model.in.UserPasswordIn;
-import com.codegym.blog.demo.model.in.UserSignUp;
-import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.in.*;
+import com.codegym.blog.demo.model.out.BlogOut;
 import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.SystemResponse;
@@ -28,4 +26,8 @@ public interface UserService {
     ResponseEntity<SystemResponse<String>> verify(String token);
 
     ResponseEntity<SystemResponse<String>> blockUser(UserBanIn userBanIn, Long id);
+
+    ResponseEntity<SystemResponse<String>> reclaimPassword(UserEmailIn userEmailIn);
+
+    ResponseEntity<SystemResponse<String>> changePasswordAfterIdentify(String token, UserPasswordIn userPasswordIn);
 }

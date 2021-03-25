@@ -6,10 +6,7 @@ import com.codegym.blog.demo.model.Entity.User;
 import com.codegym.blog.demo.model.Entity.UserPrincipal;
 import com.codegym.blog.demo.model.Entity.UserRole;
 import com.codegym.blog.demo.model.Entity.UserVerificationToken;
-import com.codegym.blog.demo.model.in.UserBanIn;
-import com.codegym.blog.demo.model.in.UserPasswordIn;
-import com.codegym.blog.demo.model.in.UserSignUp;
-import com.codegym.blog.demo.model.in.UserUpdateIn;
+import com.codegym.blog.demo.model.in.*;
 import com.codegym.blog.demo.model.out.UserOut;
 import com.codegym.blog.demo.model.out.UserPasswordOut;
 import com.codegym.blog.demo.model.response.Response;
@@ -238,9 +235,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, StringResponse.BANNED + ' ' + user.get().getUsername());
     }
 
+    @Override
+    public ResponseEntity<SystemResponse<String>> reclaimPassword(UserEmailIn userEmailIn) {
+        Optional<UserVerificationToken> token = userVerificationTokenRepository.findByUser_EmailAndVerifiedAtIsNotNull(userEmailIn.getEmail());
+        String getToken = token.get().getToken();
+
+        String linkToReclaim = "http://localhost:4200/reclaim/" + getToken;
+        emailService.sendEmail(userEmailIn.getEmail(), linkToReclaim, "Reclaim Password");
+
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, "Check your email");
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<String>> changePasswordAfterIdentify(String token, UserPasswordIn userPasswordIn) {
+        Optional<User> user = userRepository.findUserByTokentoken(token);
+        if (!user.isPresent()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.USER_NOT_FOUND);
+        }
+
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,StringResponse.PASSWORD_CHANGED);
+    }
+
 
     private void sendVerificationEmail(String token, String email) {
-        String linkVerify = "http://localhost:8080/register/" + token;
+        String linkVerify = "http://localhost:4200/register/" + token;
         String content = "please verify your account by clicking this link " + linkVerify;
         String topic = "Pro Hub verify account";
         emailService.sendEmail(email, content, topic);
