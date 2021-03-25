@@ -31,4 +31,6 @@ public interface BlogActionService {
     ResponseEntity<SystemResponse<String>> likeBlog(StatusIn status, Long id);
 
     ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(Long id);
+
+    ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes();
 }

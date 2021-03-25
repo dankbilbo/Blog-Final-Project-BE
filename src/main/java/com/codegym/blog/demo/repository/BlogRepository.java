@@ -31,4 +31,5 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             value = "SELECT * FROM blog ORDER BY views limit 5 WHERE privacy = TRUE")
     List<Blog> find5MostViewsPublicBlogs();
 
+
 }

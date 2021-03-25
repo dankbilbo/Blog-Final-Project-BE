@@ -12,6 +12,7 @@ public class BlogOut {
     private String shortDescription;
     private String previewImageURl;
     private Long userId;
+    private String username;
     private LocalDateTime createdAt;
     private String tags;
     private Long categoryId;

@@ -348,6 +348,16 @@ public class ActionBlogServiceImpl implements BlogActionService {
 
     }
 
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes() {
+        List<Blog> blogs = blogRepository.find5MostViewsPublicBlogs();
+        if (blogs.isEmpty()){
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+        List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
+        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
+    }
+
     private void deleteCommentInDb(Comment comment) {
         List<Comment> replies = commentRepository.findAllByRepliedTo_Id(comment.getId());
         boolean doesntHasReply = commentRepository.findAllByRepliedTo_Id(comment.getId()).isEmpty();

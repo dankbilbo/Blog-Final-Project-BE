@@ -76,12 +76,12 @@ public class BlogController {
         return blogService.updateComment(blogId,commentId,commentUpdateIn);
     }
 
-    @GetMapping("/toplikes")
+    @GetMapping("/topviews")
     public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Views() {
         return blogService.getTopFiveViewsBlogs();
     }
 
-    @PostMapping("/{id}/likes")
+    @PatchMapping("/{id}/likes")
     public ResponseEntity<SystemResponse<String>> likeBlog(@RequestBody StatusIn statusIn,@PathVariable Long id){
         return blogService.likeBlog(statusIn,id);
     }
@@ -89,6 +89,11 @@ public class BlogController {
     @GetMapping("/{id}/likes")
     public ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(@PathVariable Long id){
         return blogService.getAllLikesBlog(id);
+    }
+
+    @GetMapping("/toplikes")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes(){
+        return blogService.getTop5Likes();
     }
 
 }

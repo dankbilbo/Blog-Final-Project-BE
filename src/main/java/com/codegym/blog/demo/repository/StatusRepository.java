@@ -12,4 +12,5 @@ public interface StatusRepository extends JpaRepository<Status,Long> {
     Optional<Status> findAllByUser_IdAndBlog_Id(Long userId, Long blogId);
 
     List<Status> findAllByBlog_Id(Long blogId);
+
 }
