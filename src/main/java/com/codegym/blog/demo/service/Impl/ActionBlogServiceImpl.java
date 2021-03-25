@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -110,18 +112,18 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.getUsername());
 
-        if (!(correctUser && isAdmin) && blog.get().isPrivacy() == false) {
+        if (blog.get().isPrivacy() == true || (correctUser || isAdmin)) {
+            if (!username.equals(user.getUsername())) {
+                blog.get().setViews(blog.get().getViews() + 1);
+
+            }
+
+            Blog blogAfterView = blogRepository.save(blog.get());
+            BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
+            return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
+        }else {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
-
-        if (!username.equals(user.getUsername())) {
-            blog.get().setViews(blog.get().getViews() + 1);
-
-        }
-        Blog blogAfterView = blogRepository.save(blog.get());
-
-        BlogOut blogOut = MapEntityAndOut.mapBlogEntityAndOut(blogAfterView);
-        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOut);
     }
 
     @Override
@@ -156,7 +158,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
         boolean correctUser = username.equals(user.getUsername());
 
-        if (!(correctUser && isAdmin)) {
+        if (!(correctUser || isAdmin)) {
             return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
@@ -219,7 +221,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
             Comment repliedTo = null;
             if (commentIn.getCommentId() != null) {
                 boolean repliedToIsPresent = commentRepository.findById(commentIn.getCommentId()).isPresent();
-                if (!repliedToIsPresent){
+                if (!repliedToIsPresent) {
                     return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
                 }
 
@@ -289,17 +291,17 @@ public class ActionBlogServiceImpl implements BlogActionService {
     @Override
     public ResponseEntity<SystemResponse<List<BlogOut>>> getTopFiveViewsBlogs() {
         List<Blog> blogs = blogRepository.find5MostViewsPublicBlogs();
-        if (blogs.isEmpty()){
+        if (blogs.isEmpty()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
     }
 
     @Override
     public ResponseEntity<SystemResponse<String>> likeBlog(StatusIn statusIn, Long id) {
         Optional<Blog> blog = blogRepository.findById(id);
-        if (!blog.isPresent()){
+        if (!blog.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
 
@@ -309,25 +311,25 @@ public class ActionBlogServiceImpl implements BlogActionService {
         String username = authentication.getName();
         Optional<User> user = userRepository.findByUsername(username);
 
-        if (isBlogPrivate && !user.equals(blog.get().getUser())){
-            return Response.forbidden(ErrorCodeMessage.FORBIDDEN,StringResponse.FORBIDDEN);
+        if (isBlogPrivate && !user.equals(blog.get().getUser())) {
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
-        Optional<Status> statusToCheck = statusRepository.findAllByUser_IdAndBlog_Id(user.get().getId(),blog.get().getId());
-        if (statusToCheck.isPresent()){
+        Optional<Status> statusToCheck = statusRepository.findAllByUser_IdAndBlog_Id(user.get().getId(), blog.get().getId());
+        if (statusToCheck.isPresent()) {
             statusToCheck.get().setLiked(!statusToCheck.get().isLiked());
             statusRepository.save(statusToCheck.get());
-        }else {
-            Status status = new Status(LocalDateTime.now(),user.get(),LocalDateTime.now(),true,blog.get());
+        } else {
+            Status status = new Status(LocalDateTime.now(), user.get(), LocalDateTime.now(), true, blog.get());
             statusRepository.save(status);
         }
 
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,StringResponse.OK);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, StringResponse.OK);
     }
 
     @Override
     public ResponseEntity<SystemResponse<List<StatusOut>>> getAllLikesBlog(Long id) {
         Optional<Blog> blog = blogRepository.findById(id);
-        if (!blog.isPresent()){
+        if (!blog.isPresent()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         boolean isBlogPrivate = !blog.get().isPrivacy();
@@ -335,27 +337,59 @@ public class ActionBlogServiceImpl implements BlogActionService {
         String username = authentication.getName();
         Optional<User> user = userRepository.findByUsername(username);
 
-        if (isBlogPrivate && !user.equals(blog.get().getUser())){
-            return Response.forbidden(ErrorCodeMessage.FORBIDDEN,StringResponse.FORBIDDEN);
+        if (isBlogPrivate && !user.equals(blog.get().getUser())) {
+            return Response.forbidden(ErrorCodeMessage.FORBIDDEN, StringResponse.FORBIDDEN);
         }
 
         List<Status> statuses = statusRepository.findAllByBlog_Id(id);
-        if (statuses.isEmpty()){
+        if (statuses.isEmpty()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
         }
         List<StatusOut> statusOuts = MapEntityAndOut.mapListStatusEntityAndOUt(statuses);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,statusOuts);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, statusOuts);
 
     }
 
     @Override
     public ResponseEntity<SystemResponse<List<BlogOut>>> getTop5Likes() {
         List<Blog> blogs = blogRepository.find5MostLikesPublicBlog();
-        if (blogs.isEmpty()){
+        if (blogs.isEmpty()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
         List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
-        return Response.ok(ErrorCodeMessage.SUCCESS,StringResponse.OK,blogOuts);
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+    }
+
+    @Override
+    public ResponseEntity<SystemResponse<List<BlogOut>>> findALl() {
+        List<Blog> blogs = blogRepository.findAll();
+        if (blogs.isEmpty()) {
+            return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByUsername(username);
+        boolean isAdmin = false;
+        if (user.isPresent()) {
+            isAdmin = user.get().getRole().stream().anyMatch(userRole -> userRole.getRoleName().equals("ADMIN"));
+        }
+
+        if (isAdmin) {
+            List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(blogs);
+            return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+        } else if (user.isPresent() && !isAdmin) {
+            List<Blog> personalPrivateBlogs = blogRepository.findAllByUser_UsernameAndPrivacyIsFalse(username);
+            if (!personalPrivateBlogs.isEmpty()) {
+                List<Blog> newList = Stream.of(personalPrivateBlogs, blogRepository.findAllByPrivacyIsTrue())
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
+                List<BlogOut> blogOuts = MapEntityAndOut.mapListBlogEntityAndOut(newList);
+                return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, blogOuts);
+
+            }
+        }
+        return Response.ok(ErrorCodeMessage.SUCCESS, StringResponse.OK, MapEntityAndOut.mapListBlogEntityAndOut(blogRepository.findAllByPrivacyIsTrue()));
     }
 
     private void deleteCommentInDb(Comment comment) {

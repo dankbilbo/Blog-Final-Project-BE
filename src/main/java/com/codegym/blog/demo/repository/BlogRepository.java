@@ -28,7 +28,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> updateBlogAfterDeleteUser(Long userId);
 
     @Query(nativeQuery = true,
-            value = "SELECT * FROM blog ORDER BY views limit 5 WHERE privacy = TRUE")
+            value = "SELECT * FROM blog  WHERE privacy = TRUE ORDER BY views limit 5")
     List<Blog> find5MostViewsPublicBlogs();
 
     @Query(nativeQuery = true,value = "select blog.id, blog.category_id,blog.content,blog.created_at,blog.preview_imageurl,blog.short_description,blog.user_id,blog.privacy,blog.title,blog.views" +
@@ -38,5 +38,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             " group by blog.id" +
             " order by count(status.is_liked) desc")
     List<Blog> find5MostLikesPublicBlog();
+
+    List<Blog> findAllByUser_UsernameAndPrivacyIsFalse(String username);
 
 }

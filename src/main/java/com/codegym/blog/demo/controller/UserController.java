@@ -62,7 +62,7 @@ public class UserController {
         return userService.changePassword(userPasswordIn, id);
     }
 
-    @GetMapping("/{id}/blogs")
+    @GetMapping("/blogs")
     public ResponseEntity<SystemResponse<List<BlogOut>>> getPersonalBlogs() {
         return blogService.getAllPersonalBlog();
     }

@@ -96,4 +96,9 @@ public class BlogController {
         return blogService.getTop5Likes();
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<SystemResponse<List<BlogOut>>> getAll(){
+        return blogService.findALl();
+    }
+
 }
