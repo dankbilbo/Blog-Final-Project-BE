@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface CommentRepository extends JpaRepository<Comment,Long> {
-    List<Comment> findAllByBlog_Id(Long id);
+    List<Comment> findAllByBlog_IdOrderByCreatedAtDesc(Long id);
 
 }

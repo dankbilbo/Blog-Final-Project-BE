@@ -115,6 +115,7 @@ public class MapEntityAndOut {
                 comment.getContent(),
                 comment.getBlog().getId(),
                 comment.getUser().getId(),
+                comment.getUser().getUsername(),
                 comment.getCreatedAt()
         );
     }

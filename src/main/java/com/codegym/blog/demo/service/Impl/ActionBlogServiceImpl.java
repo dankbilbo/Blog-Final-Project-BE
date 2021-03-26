@@ -163,7 +163,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
         }
 
 
-        List<Comment> comments = commentRepository.findAllByBlog_Id(blog.get().getId());
+        List<Comment> comments = commentRepository.findAllByBlog_IdOrderByCreatedAtDesc(blog.get().getId());
         if (!comments.isEmpty()) {
             commentRepository.deleteAll(comments);
         }
@@ -238,7 +238,7 @@ public class ActionBlogServiceImpl implements BlogActionService {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.BLOG_NOT_FOUND);
         }
 
-        List<Comment> comments = commentRepository.findAllByBlog_Id(id);
+        List<Comment> comments = commentRepository.findAllByBlog_IdOrderByCreatedAtDesc(id);
         if (comments.isEmpty()) {
             return Response.not_found(ErrorCodeMessage.NOT_FOUND, StringResponse.NOT_FOUND);
         }
